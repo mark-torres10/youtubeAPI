@@ -8,7 +8,7 @@ TODO: can be done via Airflow.
 """
 from integrations.sync_integrations import main as sync_integrations
 from transformations.main import main as transform_podcasts
-from visualizations.update_dashboard import main as update_dashboard()
+from visualizations.update_dashboard import main as update_dashboard
 
 def main():
     sync_integrations()

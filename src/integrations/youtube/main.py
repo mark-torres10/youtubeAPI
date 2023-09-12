@@ -16,4 +16,4 @@ def main():
         )
 
         # TODO: create Channel and Video instances and dump to their
-        # PostgreSQL tables as necessary.
+        # SQL tables as necessary.

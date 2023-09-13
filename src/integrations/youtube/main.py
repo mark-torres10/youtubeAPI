@@ -27,8 +27,6 @@ def main():
         for video in videos:
             write_to_database(video)
 
-        breakpoint()
-
 
 if __name__ == "__main__":
     main()

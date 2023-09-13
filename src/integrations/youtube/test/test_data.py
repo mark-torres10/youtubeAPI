@@ -1,4 +1,13 @@
 """Data used in test_client.py"""
+MOCK_CHANNEL_METADATA = {
+    "channel_id": "test_channel_id",
+    "title": "Test Channel",
+    "description": "Test description",
+    "channel_title": "Test Channel Title",
+    "publish_time": "2023-09-10T00:00:00Z",
+    "published_at": "2023-09-10T00:00:00Z",
+    "synctimestamp": "2023-09-10T00:00:00Z",
+}
 
 CHANNEL_NAME = "Andrew Huberman"
 EXPECTED_CHANNEL_ID = "UC2D2CMWXMOVWx7giW1n3LIg"

@@ -4,10 +4,10 @@ from typing import Union
 
 import pandas as pd
 
-from integrations.youtube import helper
+from integrations.youtube import constants, helper
 from integrations.youtube.models import Channel, Video
 
-conn = sqlite3.connect('youtube_data.db')
+conn = sqlite3.connect(constants.SQLITE_DB_NAME)
 cursor = conn.cursor()
 
 
@@ -26,20 +26,20 @@ TABLE_TO_CREATE_TABLE_STATEMENT = {
     "videos": """
         CREATE TABLE IF NOT EXISTS videos (
             video_id TEXT PRIMARY KEY,
-            video_title TEXT
-            channel_id TEXT
-            channel_title TEXT
-            category_id TEXT
-            default_audio_language TEXT
-            default_language TEXT
-            description TEXT
-            live_broadcast_content TEXT
-            published_at TEXT
-            tags TEXT
-            view_count INTEGER
-            like_count INTEGER
-            favorite_count INTEGER
-            comment_count INTEGER
+            video_title TEXT,
+            channel_id TEXT,
+            channel_title TEXT,
+            category_id TEXT,
+            default_audio_language TEXT,
+            default_language TEXT,
+            description TEXT,
+            live_broadcast_content TEXT,
+            published_at TEXT,
+            tags TEXT,
+            view_count INTEGER,
+            like_count INTEGER,
+            favorite_count INTEGER,
+            comment_count INTEGER,
             synctimestamp TEXT
         )
     """
@@ -64,7 +64,7 @@ def write_to_database(instance: Union[Channel, Video]) -> None:
     SQLite tables."""
     table_name = instance.__table_name__
     if isinstance(instance, Video):
-        instance_dict = helper.flatten_video(Video)
+        instance_dict = helper.flatten_video(instance)
     else:
         instance_dict = instance.__dict__
     instance_dict.pop('__table_name__', None)

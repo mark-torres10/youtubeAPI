@@ -27,7 +27,7 @@ class VideoMetadata:
     description: str
     live_broadcast_content: str
     published_at: str
-    tags: List[str]
+    tags: str
 
 
 @dataclass

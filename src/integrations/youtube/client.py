@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
 from integrations.youtube import helper
 
@@ -21,6 +22,23 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 youtube_client = (
     build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 )
+
+def manage_rate_limit_throttling(func):
+    def wrapper(*args, **kwargs):
+        try:
+            result = func(*args, **kwargs)
+            return result
+        except HttpError as e:
+            if e.resp.status == 429:
+                # TODO: investigate rate limits to figure out backoff strategy
+                #print("Rate limit exceeded. Waiting and retrying...")
+                #time.sleep(60)  # Sleep for 60 seconds (adjust as needed)
+                return wrapper(*args, **kwargs)  # Retry the function
+            else:
+                # Handle other HTTP errors here, e.g., log or raise an exception
+                print(f"HTTP error: {e}")
+                return {"error": f"HTTP error: {e}"}
+    return wrapper
 
 class YoutubeClient:
     def __init__(self):
@@ -41,6 +59,7 @@ class YoutubeClient:
         return response["etag"]
     
     # # https://developers.google.com/youtube/v3/guides/working_with_channel_ids
+    @manage_rate_limit_throttling
     def get_channel_metadata(self, channel_name: str) -> str:
         """Retrieve channel information from the channel name.
         
@@ -56,11 +75,12 @@ class YoutubeClient:
 
         return {**metadata, **helper.METADATA_TO_HYDRATE}
 
-
+    @manage_rate_limit_throttling
     def get_video_ids_for_channel(
         self,
         channel_id: str,
-        max_results: Optional[int] = 20,
+        max_results_total: Optional[int] = 20,
+        max_results_per_query: Optional[int] = 20,
         order: Optional[str] = "date" # TODO: how else it can be sorted?
     ) -> List[str]:
         """Get all the videos that are available for a given channel.
@@ -75,7 +95,7 @@ class YoutubeClient:
         response = self.client.search().list(
             part="id",
             channelId=channel_id,
-            maxResults=max_results,
+            maxResults=max_results_per_query,
             order=order,
             type="video"
         ).execute()
@@ -86,11 +106,11 @@ class YoutubeClient:
             if item["id"]["kind"] == "youtube#video"
         ]
 
-        while True:
+        while True and len(video_ids) < max_results_total:
             response = self.client.search().list(
                 part="id",
                 channelId=channel_id,
-                maxResults=max_results,
+                maxResults=max_results_per_query,
                 order=order,
                 type="video",
                 pageToken=next_page_token
@@ -105,9 +125,9 @@ class YoutubeClient:
             else:
                 break
 
-        return video_ids
+        return video_ids[:max_results_total]
 
-
+    @manage_rate_limit_throttling
     def get_video_details_from_id(
         self, video_id: str, part_str: Optional[str] = "snippet,statistics"
     ) -> Dict:
@@ -148,14 +168,18 @@ class YoutubeClient:
     def get_video_stats_for_channel_by_video(
         self,
         channel_id: Optional[str] = None,
-        max_results: Optional[int] = 20,
+        max_results_total: Optional[int] = 20,
+        max_results_per_query: Optional[int] = 20,
         order: Optional[str] = "date"
     ) -> List[Dict]:
         """Gets statistics and metadata for each video in a channel, and
         returns as a list.
         """
         video_ids = self.get_video_ids_for_channel(
-            channel_id=channel_id, max_results=max_results, order=order
+            channel_id=channel_id,
+            max_results_total=max_results_total,
+            max_results_per_query=max_results_per_query,
+            order=order
         )
 
         video_info_list = []
@@ -175,8 +199,6 @@ class YoutubeClient:
                 "statistics": video_statistics,
                 **helper.METADATA_TO_HYDRATE
             }
-
-            breakpoint()
 
             video_info_list.append(video_info)
 

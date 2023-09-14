@@ -1,10 +1,10 @@
 import sqlite3
 import os
-from typing import Dict
+from typing import Dict, List
 
 import pandas as pd
 
-from db.sql.schemas import TABLE_NAME_TO_SCHEMA_MAP
+from db.sql.constants import TABLE_NAME_TO_KEYS_MAP, TABLE_NAME_TO_SCHEMA_MAP
 
 current_file_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -58,6 +58,34 @@ def write_to_database(
     )
     cursor.execute(insert_query, values)
     conn.commit()
+
+
+def get_column(table_name: str, column: str) -> List:
+    query = f"SELECT {column} FROM {table_name}"
+    cursor.execute(query)
+    results = cursor.fetchall()
+    return [row[0] for row in results]
+
+
+def single_row_insertion_is_valid(row_data: Dict, table_name: str) -> bool:
+    """Check if the data should be inserted into SQLite DB.
+    
+    Shouldn't be inserted if the PK of the data isn't unique in the DB.
+    Function is generic enough if we want to add extra checks.
+
+    Assumes that row_data is a dict corresponding to the data for one row.
+    """
+    table_pk = TABLE_NAME_TO_KEYS_MAP[table_name]["primary"][0]
+    row_pk_value = [row_data.get(table_pk, None)]
+    if row_pk_value is None:
+        print("Insertion into {table_name} invalid: data lacks {table_pk} PK.")
+        return False
+    query = f"""
+        SELECT {table_pk} FROM {table_name} WHERE {table_pk} IN ({row_pk_value})
+    """ # noqa
+    cursor.execute(query)
+    results = cursor.fetchall()
+    return len(results) == 0 # only return if PK for row is not in table.
 
 
 def get_all_table_results_as_df(table_name: str) -> pd.DataFrame:

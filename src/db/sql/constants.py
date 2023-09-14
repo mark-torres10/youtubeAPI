@@ -65,3 +65,23 @@ TABLE_NAME_TO_SCHEMA_MAP = {
         synctimestamp TEXT
     """ # noqa
 }
+
+
+TABLE_NAME_TO_KEYS_MAP = {
+    "channels": {
+        "primary": ["channel_id"],
+        "foreign": None
+    },
+    "videos": {
+        "primary": ["video_id"],
+        "foreign": ["channel_id"]
+    },
+    "spotify_show": {
+        "primary": ["id"],
+        "foreign": ["episode_ids"]
+    },
+    "spotify_episode": {
+        "primary": ["id"],
+        "foreign": ["show_id"]
+    }
+}

@@ -1,12 +1,9 @@
 """SQLite helper utilities for writing YouTube data."""
 from typing import Union
 
-import pandas as pd
-
-from db.sql.helper import (
-    conn, cursor, check_if_table_exists, create_table, write_to_database
-)
-from integrations.youtube import helper
+from db.sql import helper
+from db.sql.helper import conn, cursor
+from integrations.youtube.helper import flatten_video
 from integrations.youtube.models import Channel, Video
 
 
@@ -15,14 +12,19 @@ def write_youtube_data_to_db(instance: Union[Channel, Video]) -> None:
     SQLite tables."""
     table_name = instance.__table_name__
     if isinstance(instance, Video):
-        instance_dict = helper.flatten_video(instance)
+        instance_dict = flatten_video(instance)
     else:
         instance_dict = instance.__dict__
     instance_dict.pop('__table_name__', None)
 
-    if not check_if_table_exists(cursor=cursor, table_name=table_name):
-        create_table(conn=conn, cursor=cursor, table_name=table_name)
+    if not helper.check_if_table_exists(cursor=cursor, table_name=table_name):
+        helper.create_table(conn=conn, cursor=cursor, table_name=table_name)
 
-    write_to_database(
-        conn=conn, cursor=cursor, table_name=table_name, data=instance_dict
+    # only write to the SQLite DB if the primary key is unique
+    row_insertion_is_valid = helper.single_row_insertion_is_valid(
+        row_data=instance_dict, table_name=table_name
     )
+    if row_insertion_is_valid:
+        helper.write_to_database(
+            conn=conn, cursor=cursor, table_name=table_name, data=instance_dict
+        )

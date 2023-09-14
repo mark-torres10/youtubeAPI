@@ -5,7 +5,7 @@ tables.
 """
 from integrations.youtube import helper
 from integrations.youtube.client import YoutubeClient
-from integrations.youtube.sqlite_helper import write_to_database
+from integrations.youtube.sqlite_helper import write_youtube_data_to_db
 
 def main():
     client = YoutubeClient()
@@ -23,9 +23,9 @@ def main():
             helper.create_video_dataclass_instance(video_metadata)
             for video_metadata in video_metadata_list
         ]
-        write_to_database(channel)
+        write_youtube_data_to_db(channel)
         for video in videos:
-            write_to_database(video)
+            write_youtube_data_to_db(video)
 
 
 if __name__ == "__main__":

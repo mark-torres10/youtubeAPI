@@ -2,20 +2,19 @@ import os
 
 import pytest
 
-from integrations.youtube.constants import SQLITE_DB_NAME
 from integrations.youtube.models import Channel, Video
-from integrations.youtube.sqlite_helper import (
+from db.sql.helper import (
     check_if_table_exists, create_table, cursor,
-    get_all_table_results_as_df, write_to_database,
+    get_all_table_results_as_df, TEST_DB_NAME, write_to_database
 )
-from integrations.youtube.test import test_data
+from db.sql.test import test_data
 
 @pytest.fixture(scope="module", autouse=True)
 def cleanup_database():
     yield
 
-    if os.path.exists(SQLITE_DB_NAME):
-        os.remove(SQLITE_DB_NAME)
+    if os.path.exists(TEST_DB_NAME):
+        os.remove(TEST_DB_NAME)
 
 
 def test_create_table():

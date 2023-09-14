@@ -42,7 +42,7 @@ TABLE_NAME_TO_SCHEMA_MAP = {
         type TEXT,
         uri TEXT,
         total_episodes INTEGER,
-        episode_ids TEXT  -- Comma-separated list of episode IDs
+        episode_ids TEXT,  -- Comma-separated list of episode IDs
         synctimestamp TEXT
     """,
     "spotify_episode": """
@@ -63,5 +63,5 @@ TABLE_NAME_TO_SCHEMA_MAP = {
         type TEXT,
         uri TEXT,
         synctimestamp TEXT
-    """
+    """ # noqa
 }

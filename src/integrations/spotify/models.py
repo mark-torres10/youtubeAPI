@@ -1,6 +1,6 @@
 """Wrapper dataclass to store Spotify data."""
 from dataclasses import dataclass, fields
-from typing import Dict, List
+from typing import List
 
 
 @dataclass
@@ -26,7 +26,7 @@ class SpotifyEpisode:
     name: str
     release_date: str
     release_date_precision: str
-    type: str="episode"
+    type: str # only 1 possible value, "episode"
     uri: str
     synctimestamp: str
 
@@ -50,7 +50,7 @@ class SpotifyShow:
     media_type: str
     name: str
     publisher: str
-    type: str="show" # only 1 possible value for `show` objects.
+    type: str # only 1 possible value, "show"
     uri: str
     total_episodes: int
     episode_ids: List[str] # contains the IDs of the episodes

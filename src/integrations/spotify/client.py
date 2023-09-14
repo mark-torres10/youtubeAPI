@@ -117,7 +117,10 @@ class SpotifyClient:
         }
         endpoint = constants.PODCAST_SHOW_EPISODES_ENDPOINT.format(id=show_id)
         episodes = []
-        while endpoint:
+        # TODO: need to note that we'll strictly get max_results or less for
+        # now, but this is OK for development purposes. We can add extra
+        # filtering in the future.
+        while endpoint and len(episodes) < max_results:
             cached_data = get_cached_data(
                 function_name="get_episode_details_for_podcast_show",
                 params={
@@ -129,12 +132,14 @@ class SpotifyClient:
                 return cached_data
             response = requests.get(endpoint, headers=headers, params=params)
             episode_data = response.json()
-            episodes.extend(
+            episode_data_items = [
                 {
-                    **episode_data['items'],
+                    **item,
                     **METADATA_TO_HYDRATE
                 }
-            )
+                for item in episode_data['items']
+            ]
+            episodes.extend(episode_data_items)
             endpoint = episode_data['next']
             if not cached_data:
                 cache_data(

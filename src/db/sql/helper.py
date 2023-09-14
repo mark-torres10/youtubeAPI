@@ -1,14 +1,18 @@
 import sqlite3
+import os
 from typing import Dict
 
 import pandas as pd
 
 from db.sql.schemas import TABLE_NAME_TO_SCHEMA_MAP
 
+current_file_directory = os.path.dirname(os.path.abspath(__file__))
+
 SQLITE_DB_NAME = "data.db"
+SQLITE_DB_PATH = os.path.join(current_file_directory, SQLITE_DB_NAME)
 TEST_DB_NAME = "test-data.db"
 
-conn = sqlite3.connect(SQLITE_DB_NAME)
+conn = sqlite3.connect(SQLITE_DB_PATH)
 cursor = conn.cursor()
 
 def generate_create_table_statement(table_name: str) -> str:

@@ -53,9 +53,8 @@ class YoutubeClient:
             function_name="get_channel_id_from_handle",
             params={"handle": handle}
         )
-        if cached_data:
+        if cached_data and len(cached_data) > 0:
             return cached_data
-
         response = self.client.channels().list(
             part="id",
             forUsername=handle
@@ -82,7 +81,7 @@ class YoutubeClient:
         cached_data = get_cached_data(
             function_name="get_channel_metadata", params=params
         )
-        if cached_data:
+        if cached_data and len(cached_data) > 0:
             return cached_data
 
         response = self.client.search().list(
@@ -111,6 +110,9 @@ class YoutubeClient:
         or to redesign this as a handler that is only triggered when a new
         video is dropped.
         # https://developers.google.com/resources/api-libraries/documentation/youtube/v3/python/latest/youtube_v3.search.html
+
+        TODO: need to think of a better caching strategy since pagination
+        tokens expire (it seems?)
         """ # noqa
         params = {
             "channel_id": channel_id,
@@ -121,9 +123,8 @@ class YoutubeClient:
         cached_data = get_cached_data(
             function_name="get_video_ids_for_channel", params=params
         )
-        if cached_data:
+        if cached_data and len(cached_data) > 0:
             return cached_data
-
         response = self.client.search().list(
             part="id",
             channelId=channel_id,
@@ -131,12 +132,6 @@ class YoutubeClient:
             order=order,
             type="video"
         ).execute()
-
-        cache_data(
-            function_name="get_video_ids_for_channel",
-            params=params,
-            data=response
-        )
 
         next_page_token = response.get("nextPageToken", None)
         video_ids = [
@@ -157,11 +152,11 @@ class YoutubeClient:
                 function_name="get_channel_metadata",
                 params=pagination_params
             )
+            cached_data = None
             response = (
-                cached_data if cached_data
+                cached_data if cached_data and len(cached_data) > 0
                 else self.client.search().list(**pagination_params).execute()
             )
-
             cache_data(
                 function_name="get_channel_metadata",
                 params=pagination_params,
@@ -190,7 +185,7 @@ class YoutubeClient:
             function_name="get_video_details_from_id",
             params=params
         )
-        if cached_data:
+        if cached_data and len(cached_data) > 0:
             return cached_data
 
         response = self.client.videos().list(**params).execute()
@@ -251,11 +246,13 @@ class YoutubeClient:
             video_response = self.get_video_details_from_id(
                 video_id=video_id
             )
+            if video_response["pageInfo"]["totalResults"] == 0:
+                continue
+
             video_metadata, video_statistics = (
                 self.parse_video_response(video_response)
             )
 
-            # Extract relevant details
             video_info = {
                 'video_id': video_id,
                 "metadata": video_metadata,

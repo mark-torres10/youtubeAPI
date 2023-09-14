@@ -26,7 +26,13 @@ def main():
         write_youtube_data_to_db(channel)
         for video in videos:
             write_youtube_data_to_db(video)
-
+        print(
+            "Completed getting updated channel and episode data for channel"
+            f"{channel_name} with id={channel_id}. Added {len(videos)} "
+            f"episodes to DB for channel {channel_name}"
+        )
+    print('-' * 10)
+    print("Completed YouTube sync.")
 
 if __name__ == "__main__":
     main()

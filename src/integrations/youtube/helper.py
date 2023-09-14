@@ -1,3 +1,4 @@
+from dataclasses import asdict
 from typing import Dict
 
 from integrations.youtube.models import (
@@ -23,6 +24,7 @@ def create_video_dataclass_instance(video_metadata: Dict) -> Video:
         video_title=video_metadata["metadata"]["title"],
         channel_id=video_metadata["metadata"]["channelId"],
         channel_title=video_metadata["metadata"]["channelTitle"],
+        category_id=video_metadata["metadata"]["categoryId"],
         default_audio_language=video_metadata["metadata"]["defaultAudioLanguage"], # noqa
         default_language=video_metadata["metadata"]["defaultLanguage"],
         description=video_metadata["metadata"]["description"],
@@ -52,6 +54,6 @@ def flatten_video(video: Video) -> Dict:
             "video_id": video.video_id,
             "synctimestamp": video.synctimestamp
         },
-        **video.metadata,
-        **video.statistics
+        **asdict(video.metadata),
+        **asdict(video.statistics)
     }

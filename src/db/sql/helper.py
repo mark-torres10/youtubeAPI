@@ -76,16 +76,14 @@ def single_row_insertion_is_valid(row_data: Dict, table_name: str) -> bool:
     Assumes that row_data is a dict corresponding to the data for one row.
     """
     table_pk = TABLE_NAME_TO_KEYS_MAP[table_name]["primary"][0]
-    row_pk_value = [row_data.get(table_pk, None)]
+    row_pk_value = row_data.get(table_pk, None)
     if row_pk_value is None:
-        print("Insertion into {table_name} invalid: data lacks {table_pk} PK.")
+        print(
+            f"Insertion into {table_name} invalid: data lacks {table_pk} PK."
+        )
         return False
-    query = f"""
-        SELECT {table_pk} FROM {table_name} WHERE {table_pk} IN ({row_pk_value})
-    """ # noqa
-    cursor.execute(query)
-    results = cursor.fetchall()
-    return len(results) == 0 # only return if PK for row is not in table.
+    col = get_column(table_name=table_name, column=table_pk)
+    return row_pk_value not in col # only insert if PK is unique.
 
 
 def get_all_table_results_as_df(table_name: str) -> pd.DataFrame:

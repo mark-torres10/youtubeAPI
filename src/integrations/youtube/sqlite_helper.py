@@ -20,8 +20,8 @@ def write_youtube_data_to_db(instance: Union[Channel, Video]) -> None:
         instance_dict = instance.__dict__
     instance_dict.pop('__table_name__', None)
 
-    if not check_if_table_exists(table_name):
-        create_table(table_name)
+    if not check_if_table_exists(cursor=cursor, table_name=table_name):
+        create_table(conn=conn, cursor=cursor, table_name=table_name)
 
     write_to_database(
         conn=conn, cursor=cursor, table_name=table_name, data=instance_dict

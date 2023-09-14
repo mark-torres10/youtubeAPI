@@ -1,10 +1,10 @@
 from integrations.youtube.models import Channel, Video
 
-from db.sql.helper import conn, create_table, cursor, TEST_DB_NAME
-from db.sql.test.helper_test import cleanup_database
-from integrations.youtube.sqlite_helper import (
-    get_all_table_results_as_df, write_youtube_data_to_db
+from db.sql.helper import (
+    conn, create_table, cursor, get_all_table_results_as_df
 )
+from db.sql.test.helper_test import cleanup_database
+from integrations.youtube.sqlite_helper import write_youtube_data_to_db
 from integrations.youtube.test import test_data
 
 def test_write_to_database_channel(cleanup_database):

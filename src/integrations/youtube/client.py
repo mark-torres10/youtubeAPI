@@ -14,7 +14,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 from db.redis.redis_caching import cache_data, get_cached_data
-from integrations.youtube import helper
+from lib.sync_enrichment import METADATA_TO_HYDRATE
 
 load_dotenv(Path("../../../.env"))
 
@@ -50,7 +50,7 @@ class YoutubeClient:
         NOTE: need to get this implementing, but API docs seem to be misleading
         """
         cached_data = get_cached_data(
-            api_endpoint="get_channel_id_from_handle",
+            function_name="get_channel_id_from_handle",
             params={"handle": handle}
         )
         if cached_data:
@@ -63,7 +63,7 @@ class YoutubeClient:
 
         res = response["etag"]
         cache_data(
-            api_endpoint="get_channel_id_from_handle",
+            function_name="get_channel_id_from_handle",
             params={"handle": handle},
             data=res
         )
@@ -78,9 +78,9 @@ class YoutubeClient:
         the channel tags instead. For a first pass, just returning the
         first result, since this will give us the most likely result.
         """
+        params = {"channel_name": channel_name}
         cached_data = get_cached_data(
-            api_endpoint="get_channel_metadata",
-            params={"channel_name": channel_name}
+            function_name="get_channel_metadata", params=params
         )
         if cached_data:
             return cached_data
@@ -90,11 +90,9 @@ class YoutubeClient:
         ).execute()
         metadata = response["items"][0]["snippet"]
 
-        res = {**metadata, **helper.METADATA_TO_HYDRATE}
+        res = {**metadata, **METADATA_TO_HYDRATE}
         cache_data(
-            api_endpoint="get_channel_metadata",
-            params={"channel_name": channel_name},
-            data=res
+            function_name="get_channel_metadata", params=params, data=res
         )
         return res
 
@@ -121,7 +119,7 @@ class YoutubeClient:
             "order": order
         }
         cached_data = get_cached_data(
-            api_endpoint="get_video_ids_for_channel", params=params
+            function_name="get_video_ids_for_channel", params=params
         )
         if cached_data:
             return cached_data
@@ -135,7 +133,7 @@ class YoutubeClient:
         ).execute()
 
         cache_data(
-            api_endpoint="get_video_ids_for_channel",
+            function_name="get_video_ids_for_channel",
             params=params,
             data=response
         )
@@ -156,7 +154,7 @@ class YoutubeClient:
                 "pageToken": next_page_token
             }
             cached_data = get_cached_data(
-                api_endpoint="get_channel_metadata",
+                function_name="get_channel_metadata",
                 params=pagination_params
             )
             response = (
@@ -165,7 +163,7 @@ class YoutubeClient:
             )
 
             cache_data(
-                api_endpoint="get_channel_metadata",
+                function_name="get_channel_metadata",
                 params=pagination_params,
                 data=response
             )
@@ -189,7 +187,7 @@ class YoutubeClient:
         """Given a video ID, get the details about the video."""
         params = {"part": part_str, "id": video_id}
         cached_data = get_cached_data(
-            api_endpoint="get_video_details_from_id",
+            function_name="get_video_details_from_id",
             params=params
         )
         if cached_data:
@@ -197,7 +195,7 @@ class YoutubeClient:
 
         response = self.client.videos().list(**params).execute()
         cache_data(
-            api_endpoint="get_video_details_from_id",
+            function_name="get_video_details_from_id",
             params=params,
             data=response
         )
@@ -262,7 +260,7 @@ class YoutubeClient:
                 'video_id': video_id,
                 "metadata": video_metadata,
                 "statistics": video_statistics,
-                **helper.METADATA_TO_HYDRATE
+                **METADATA_TO_HYDRATE
             }
 
             video_info_list.append(video_info)

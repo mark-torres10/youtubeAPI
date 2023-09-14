@@ -1,4 +1,4 @@
-"""Wrapper dataclass to store channel information."""
+"""Wrapper dataclass to store YouTube data."""
 from dataclasses import dataclass
 
 @dataclass

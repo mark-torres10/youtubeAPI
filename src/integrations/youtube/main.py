@@ -3,14 +3,14 @@
 Extracts data from YouTube API, for each channel, and then dumps into SQLite
 tables.
 """
-from integrations.youtube import helper
+from integrations.youtube import constants, helper
 from integrations.youtube.client import YoutubeClient
 from integrations.youtube.sqlite_helper import write_youtube_data_to_db
 
 def main():
     client = YoutubeClient()
 
-    for channel_name, channel_id in helper.MAP_CHANNEL_HANDLE_TO_ID.items():
+    for channel_name, channel_id in constants.MAP_CHANNEL_HANDLE_TO_ID.items():
         channel_metadata = client.get_channel_metadata(channel_name)
         channel_id = channel_metadata["channelId"]
         video_metadata_list = (

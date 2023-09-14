@@ -1,20 +1,8 @@
 from typing import Dict
 
-from integrations.youtube import constants
 from integrations.youtube.models import (
     Channel, Video, VideoMetadata, VideoStatistics
 )
-
-METADATA_TO_HYDRATE = {
-    "synctimestamp": constants.CURRENT_SYNCTIMESTAMP
-}
-
-def hydrate_with_metadata(data: Dict) -> Dict:
-    """Hydrate sync data with metadata."""
-    return {
-        **data,
-        **METADATA_TO_HYDRATE
-    }
 
 
 def create_channel_dataclass_instance(channel_metadata: Dict) -> Channel:
@@ -62,10 +50,8 @@ def flatten_video(video: Video) -> Dict:
     return {
         **{
             "video_id": video.video_id,
+            "synctimestamp": video.synctimestamp
         },
         **video.metadata,
-        **video.statistics,
-        **{
-            "synctimestamp": video.synctimestamp
-        }
+        **video.statistics
     }

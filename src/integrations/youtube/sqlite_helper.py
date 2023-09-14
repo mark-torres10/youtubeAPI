@@ -26,9 +26,3 @@ def write_youtube_data_to_db(instance: Union[Channel, Video]) -> None:
     write_to_database(
         conn=conn, cursor=cursor, table_name=table_name, data=instance_dict
     )
-
-
-def get_all_table_results_as_df(table_name: str) -> pd.DataFrame:
-    query = f"SELECT * FROM {table_name}"
-    df = pd.read_sql_query(query, conn)
-    return df

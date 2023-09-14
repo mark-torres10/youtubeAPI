@@ -20,10 +20,6 @@ load_dotenv(Path("../../../.env"))
 
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
-youtube_client = (
-    build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
-)
-
 def manage_rate_limit_throttling(func):
     def wrapper(*args, **kwargs):
         try:

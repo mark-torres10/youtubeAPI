@@ -1,34 +1,18 @@
-import os
-
-import pytest
-
 from integrations.youtube.models import Channel, Video
-from db.sql.helper import (
-    check_if_table_exists, create_table, cursor,
-    get_all_table_results_as_df, TEST_DB_NAME, write_to_database
+
+from db.sql.helper import conn, create_table, cursor, TEST_DB_NAME
+from db.sql.test.helper_test import cleanup_database
+from integrations.youtube.sqlite_helper import (
+    get_all_table_results_as_df, write_youtube_data_to_db
 )
-from db.sql.test import test_data
-
-@pytest.fixture(scope="module", autouse=True)
-def cleanup_database():
-    yield
-
-    if os.path.exists(TEST_DB_NAME):
-        os.remove(TEST_DB_NAME)
-
-
-def test_create_table():
-    # Test creating a table
-    create_table("channels")
-    assert check_if_table_exists("channels") is True
-
+from integrations.youtube.test import test_data
 
 def test_write_to_database_channel(cleanup_database):
     # Test writing a Channel instance to the database
-    create_table("channels")
+    create_table(conn=conn, cursor=cursor, table_name="channels")
     channel = Channel(**test_data.MOCK_CHANNEL_METADATA)
 
-    write_to_database(channel)
+    write_youtube_data_to_db(instance=channel)
 
     # Check if the data was written successfully
     query = "SELECT * FROM channels WHERE channel_id='test_channel_id'"
@@ -50,7 +34,7 @@ def test_get_all_table_results_as_df_with_channel():
 
 def test_write_to_database_video(cleanup_database):
     # Test writing a Video instance to the database
-    create_table("videos")
+    create_table(conn=conn, cursor=cursor, table_name="videos")
     video = Video(
         video_id="test_video_id",
         metadata={
@@ -75,7 +59,7 @@ def test_write_to_database_video(cleanup_database):
         synctimestamp="2023-09-10T00:00:00Z",
     )
 
-    write_to_database(video)
+    write_youtube_data_to_db(instance=video)
 
     query = "SELECT * FROM videos WHERE video_id='test_video_id'"
     cursor.execute(query)

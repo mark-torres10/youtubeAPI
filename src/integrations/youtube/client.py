@@ -13,6 +13,7 @@ from typing import Dict, List, Optional
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from db.redis.redis_caching import cache_data, get_cached_data
 from integrations.youtube import helper
 
 load_dotenv(Path("../../../.env"))
@@ -51,12 +52,26 @@ class YoutubeClient:
         """Gets channel ID from a handle.
         
         NOTE: need to get this implementing, but API docs seem to be misleading
-        """    
+        """
+        cached_data = get_cached_data(
+            api_endpoint="get_channel_id_from_handle",
+            params={"handle": handle}
+        )
+        if cached_data:
+            return cached_data
+
         response = self.client.channels().list(
             part="id",
             forUsername=handle
         ).execute()
-        return response["etag"]
+
+        res = response["etag"]
+        cache_data(
+            api_endpoint="get_channel_id_from_handle",
+            params={"handle": handle},
+            data=res
+        )
+        return res
     
     # # https://developers.google.com/youtube/v3/guides/working_with_channel_ids
     @manage_rate_limit_throttling
@@ -67,13 +82,25 @@ class YoutubeClient:
         the channel tags instead. For a first pass, just returning the
         first result, since this will give us the most likely result.
         """
+        cached_data = get_cached_data(
+            api_endpoint="get_channel_metadata",
+            params={"channel_name": channel_name}
+        )
+        if cached_data:
+            return cached_data
+
         response = self.client.search().list(
             part="snippet", type="channel", q=channel_name
         ).execute()
-
         metadata = response["items"][0]["snippet"]
 
-        return {**metadata, **helper.METADATA_TO_HYDRATE}
+        res = {**metadata, **helper.METADATA_TO_HYDRATE}
+        cache_data(
+            api_endpoint="get_channel_metadata",
+            params={"channel_name": channel_name},
+            data=res
+        )
+        return res
 
     @manage_rate_limit_throttling
     def get_video_ids_for_channel(
@@ -89,9 +116,20 @@ class YoutubeClient:
         A future optimization would be to update this query only by new videos,
         or to redesign this as a handler that is only triggered when a new
         video is dropped.
-        """
-
         # https://developers.google.com/resources/api-libraries/documentation/youtube/v3/python/latest/youtube_v3.search.html
+        """ # noqa
+        params = {
+            "channel_id": channel_id,
+            "max_results_total": max_results_total,
+            "max_results_per_query": max_results_per_query,
+            "order": order
+        }
+        cached_data = get_cached_data(
+            api_endpoint="get_video_ids_for_channel", params=params
+        )
+        if cached_data:
+            return cached_data
+
         response = self.client.search().list(
             part="id",
             channelId=channel_id,
@@ -100,6 +138,12 @@ class YoutubeClient:
             type="video"
         ).execute()
 
+        cache_data(
+            api_endpoint="get_video_ids_for_channel",
+            params=params,
+            data=response
+        )
+
         next_page_token = response.get("nextPageToken", None)
         video_ids = [
             item["id"]["videoId"] for item in response.get("items", [])
@@ -107,14 +151,29 @@ class YoutubeClient:
         ]
 
         while True and len(video_ids) < max_results_total:
-            response = self.client.search().list(
-                part="id",
-                channelId=channel_id,
-                maxResults=max_results_per_query,
-                order=order,
-                type="video",
-                pageToken=next_page_token
-            ).execute()
+            pagination_params = {
+                "part": "id",
+                "channelId": channel_id,
+                "maxResults": max_results_per_query,
+                "order": order,
+                "type": "video",
+                "pageToken": next_page_token
+            }
+            cached_data = get_cached_data(
+                api_endpoint="get_channel_metadata",
+                params=pagination_params
+            )
+            response = (
+                cached_data if cached_data
+                else self.client.search().list(**pagination_params).execute()
+            )
+
+            cache_data(
+                api_endpoint="get_channel_metadata",
+                params=pagination_params,
+                data=response
+            )
+
             if "items" in response:
                 video_ids.extend([
                     item["id"]["videoId"] for item in response.get("items", [])
@@ -132,10 +191,20 @@ class YoutubeClient:
         self, video_id: str, part_str: Optional[str] = "snippet,statistics"
     ) -> Dict:
         """Given a video ID, get the details about the video."""
-        response = self.client.videos().list(
-            part=part_str,
-            id=video_id
-        ).execute()
+        params = {"part": part_str, "id": video_id}
+        cached_data = get_cached_data(
+            api_endpoint="get_video_details_from_id",
+            params=params
+        )
+        if cached_data:
+            return cached_data
+
+        response = self.client.videos().list(**params).execute()
+        cache_data(
+            api_endpoint="get_video_details_from_id",
+            params=params,
+            data=response
+        )
         return response
 
 

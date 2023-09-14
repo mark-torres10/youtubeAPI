@@ -1,7 +1,5 @@
 """Wrapper dataclass to store channel information."""
 from dataclasses import dataclass
-from datetime import datetime
-from typing import Dict, List
 
 @dataclass
 class Channel:

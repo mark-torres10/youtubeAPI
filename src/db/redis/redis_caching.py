@@ -27,7 +27,7 @@ def cache_key(api_endpoint: str, params: Dict) -> str:
     params_str = json.dumps(params, sort_keys=True)
     return f"{api_endpoint}:{params_str}"
 
-def cache_data(api_endpoint: str, params: Dict, data: List[Dict]) -> None:
+def cache_data(api_endpoint: str, params: Dict, data: Dict) -> None:
     """Cache the API response data in Redis."""
     key = cache_key(api_endpoint, params)
     data_str = json.dumps(data)
@@ -35,7 +35,7 @@ def cache_data(api_endpoint: str, params: Dict, data: List[Dict]) -> None:
         key, DEFAULT_CACHE_TIME_SECONDS, data_str
     )
 
-def get_cached_data(api_endpoint: str, params: Dict) -> List[Dict]:
+def get_cached_data(api_endpoint: str, params: Dict) -> Dict:
     """Retrieve cached data from Redis if available."""
     key = cache_key(api_endpoint, params)
     cached_data = redis_conn.get(key)

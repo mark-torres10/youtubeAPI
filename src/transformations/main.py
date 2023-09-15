@@ -1,4 +1,4 @@
-from transformations.enrichment.map_podcasts import main as map_podcasts
+from transformations.enrichment.mappings.do_mappings import main as map_podcasts
 
 def main():
     map_podcasts()

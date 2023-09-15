@@ -7,29 +7,8 @@ from transformations.enrichment.mappings.sqlite_helper import (
 )
 
 def main():
-    """Enrich podcast information from Spotify with additional podcast
-    information from YouTube, then write this shared information to DB."""
-
-    """
-    # get mappings
-    mappings = map_channel_youtube_spotify_content(channel_name)
-
-    # create unified Podcast object, with enriched data from both the YouTube
-    # and the Spotify data.
-    podcasts = [
-        create_podcast_object(
-            youtube_video=mapping["youtube_video"],
-            spotify_episode=mapping["spotify_episode"]
-        )
-        for mapping in mappings
-    ]
-
-    # write to SQLite DB.
-    for podcast in podcasts:
-        write_mapped_data_to_db(podcast)
-    """
-    # TODO: figure out how to get channels to map. Could just get channels
-    # from `channels` / `spotify_show` tables.
+    """Creates unified definitions of podcast channels and episodes across
+    different integrations by mapping them together."""
     CHANNELS = []
     for channel in CHANNELS:
         consolidated_channel_metadata = map_channels(channel)

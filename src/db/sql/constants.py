@@ -1,5 +1,5 @@
 TABLE_NAME_TO_SCHEMA_MAP = {
-    "channels": """
+    "youtube_channels": """
         channel_id TEXT PRIMARY KEY,
         title TEXT,
         description TEXT,
@@ -8,7 +8,7 @@ TABLE_NAME_TO_SCHEMA_MAP = {
         published_at TEXT,
         synctimestamp TEXT
     """,
-    "videos": """
+    "youtube_videos": """
         video_id TEXT PRIMARY KEY,
         video_title TEXT,
         channel_id TEXT,

@@ -15,6 +15,9 @@ TEST_DB_NAME = "test-data.db"
 conn = sqlite3.connect(SQLITE_DB_PATH)
 cursor = conn.cursor()
 
+test_conn = sqlite3.connect(TEST_DB_NAME)
+test_cursor = test_conn.cursor()
+
 def generate_create_table_statement(table_name: str) -> str:
     schema = TABLE_NAME_TO_SCHEMA_MAP[table_name]
     return f"""

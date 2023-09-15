@@ -4,14 +4,16 @@ from typing import Union
 from db.sql import helper
 from db.sql.helper import conn, cursor
 from integrations.youtube.helper import flatten_video
-from integrations.youtube.models import Channel, Video
+from integrations.youtube.models import YoutubeChannel, YoutubeVideo
 
 
-def write_youtube_data_to_db(instance: Union[Channel, Video]) -> None:
+def write_youtube_data_to_db(
+    instance: Union[YoutubeChannel, YoutubeVideo]
+) -> None:
     """Writes either the Channel or Video instance to their respective
     SQLite tables."""
     table_name = instance.__table_name__
-    if isinstance(instance, Video):
+    if isinstance(instance, YoutubeVideo):
         instance_dict = flatten_video(instance)
     else:
         instance_dict = instance.__dict__

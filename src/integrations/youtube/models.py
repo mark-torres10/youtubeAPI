@@ -2,9 +2,9 @@
 from dataclasses import dataclass
 
 @dataclass
-class Channel:
+class YoutubeChannel:
     """Class that keeps track of metadata for a given YouTube channel."""
-    __table_name__ = "channels"
+    __table_name__ = "youtube_channels"
     channel_id: str
     title: str
     description: str
@@ -37,9 +37,9 @@ class VideoStatistics:
 
 
 @dataclass
-class Video:
+class YoutubeVideo:
     """Class that stores statistics about a given video."""
-    __table_name__ = "videos"
+    __table_name__ = "youtube_videos"
     video_id: str
     metadata: VideoMetadata
     statistics: VideoStatistics

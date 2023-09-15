@@ -48,6 +48,7 @@ TABLE_NAME_TO_SCHEMA_MAP = {
     "spotify_episode": """
         id TEXT PRIMARY KEY,
         show_id TEXT,  -- Foreign key to link episodes to shows (assuming a shows table)
+        show_name TEXT,
         audio_preview_url TEXT,
         description TEXT,
         html_description TEXT,

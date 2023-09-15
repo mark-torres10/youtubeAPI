@@ -17,7 +17,9 @@ def main():
         spotify_show = helper.create_spotify_show_instance(show_metadata)
         spotify_episodes = [
             helper.create_spotify_episode_instance(
-                metadata=episode_metadata, show_id=show_metadata["id"]
+                metadata=episode_metadata,
+                show_id=show_metadata["id"],
+                show_name=show_metadata["name"]
             )
             for episode_metadata in episode_metadata_list
         ]

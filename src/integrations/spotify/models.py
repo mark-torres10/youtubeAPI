@@ -14,6 +14,7 @@ class SpotifyEpisode:
     __table_name__ = "spotify_episode"
     id: str # primary key
     show_id: str # foreign key
+    show_name: str
     audio_preview_url: str
     description: str
     html_description: str

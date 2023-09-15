@@ -7,11 +7,12 @@ from integrations.spotify.models import (
 
 
 def create_spotify_episode_instance(
-    metadata: Dict, show_id: str
+    metadata: Dict, show_id: str, show_name: str
 ) -> SpotifyEpisode:
     episode = SpotifyEpisode(
         id=metadata["id"],
         show_id=show_id,
+        show_name=show_name,
         audio_preview_url=metadata["audio_preview_url"],
         description=metadata["description"],
         html_description=metadata["html_description"],

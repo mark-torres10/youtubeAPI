@@ -47,7 +47,7 @@ class MappedEpisode:
     """
     __table_name__ = MAPPED_EPISODES_TABLE_NAME
     consolidated_name: str # PK
-    channel_id: str  # id from MappedChannel
+    mapped_channel_name: str  # FK, PK of MappedChannel
     consolidated_description: str
     youtube_episode: MappedEpisodeIntegrationMetadata
     spotify_episode: MappedEpisodeIntegrationMetadata

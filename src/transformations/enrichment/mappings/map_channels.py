@@ -8,7 +8,6 @@ from transformations.enrichment.helper import (
     create_mapped_channel_instance, get_spotify_show_info,
     get_youtube_channel_info
 )
-from transformations.enrichment.mappings.models import MappedChannel
 
 
 YOUTUBE_CHANNEL_TO_SPOTIFY_SHOW_MAPPING = {
@@ -158,7 +157,7 @@ def map_channels(
     youtube_channel_to_episode_ids_map = map_channel_to_episode_ids["youtube"]
     spotify_channel_to_episode_ids_map = map_channel_to_episode_ids["spotify"]
 
-    res = []
+    mapped_channel_metadata = []
 
     for channel_metadata in consolidated_metadata:
         youtube_channel_id = channel_metadata["youtube_channel_id"]
@@ -169,12 +168,12 @@ def map_channels(
         channel_metadata["spotify_episode_ids"] = (
             spotify_channel_to_episode_ids_map[spotify_show_id]
         )
-        res.append(channel_metadata)
+        mapped_channel_metadata.append(channel_metadata)
 
     # create mapped channel instances
     mapped_channels = [
         create_mapped_channel_instance(channel_metadata)
-        for channel_metadata in res
+        for channel_metadata in mapped_channel_metadata
     ]
 
     return mapped_channels

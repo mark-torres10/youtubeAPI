@@ -13,8 +13,7 @@ repos:
           "--warn-unreachable",
           "--warn-redundant-casts",
           "--exclude=test/",
-          "--namespace-packages",
-          #"src/"
+          "--namespace-packages"
         ]
 
 # https://github.com/pre-commit/pre-commit-hooks

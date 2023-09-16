@@ -5,7 +5,8 @@ import pandas as pd
 from db.sql.constants import TABLE_NAME_TO_KEYS_MAP
 from db.sql.helper import get_all_table_results_as_df
 from transformations.enrichment.mappings.models import (
-    MappedChannel, MappedChannelIntegrationMetadata
+    MappedChannel, MappedChannelIntegrationMetadata, MappedEpisode,
+    MappedEpisodeIntegrationMetadata
 )
 
 
@@ -51,3 +52,20 @@ def create_mapped_channel_instance(metadata: Dict) -> MappedChannel:
         last_updated_timestamp=metadata["last_updated_timestamp"]
     )
     return mapped_channel
+
+
+def create_mapped_episode_instance(metadata: Dict) -> MappedEpisode:
+    youtube_episode= MappedChannelIntegrationMetadata(
+        metadata["youtube_episoode"]
+    )
+    spotify_episode = MappedChannelIntegrationMetadata(
+        metadata["spotify_episode"]
+    )
+    mapped_episode = MappedEpisode(
+        consolidated_name=metadata["consolidated_name"],
+        mapped_channel_name=metadata["mapped_channel_name"],
+        consolidated_description=metadata["consolidated_description"],
+        youtube_episode=youtube_episode,
+        spotify_episode=spotify_episode
+    )
+    return mapped_episode

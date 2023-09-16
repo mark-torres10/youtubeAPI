@@ -10,7 +10,8 @@ from integrations.sync_integrations import main as sync_integrations
 from transformations.main import main as transform_podcasts
 from visualizations.update_dashboard import main as update_dashboard
 
-def main():
+
+def main() -> None:
     sync_integrations()
     transform_podcasts()
     update_dashboard()

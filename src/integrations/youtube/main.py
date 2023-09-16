@@ -7,16 +7,15 @@ from integrations.youtube import constants, helper
 from integrations.youtube.client import YoutubeClient
 from integrations.youtube.sqlite_helper import write_youtube_data_to_db
 
-def main():
+
+def main() -> None:
     client = YoutubeClient()
 
     for channel_name, channel_id in constants.MAP_CHANNEL_HANDLE_TO_ID.items():
         channel_metadata = client.get_channel_metadata(channel_name)
         channel_id = channel_metadata["channelId"]
-        video_metadata_list = (
-            client.get_video_stats_for_channel_by_video(
-                channel_id=channel_id
-            )
+        video_metadata_list = client.get_video_stats_for_channel_by_video(
+            channel_id=channel_id
         )
         channel = helper.create_channel_dataclass_instance(channel_metadata)
         videos = [
@@ -31,8 +30,9 @@ def main():
             f"{channel_name} with id={channel_id}. Added {len(videos)} "
             f"episodes to DB for channel {channel_name}"
         )
-    print('-' * 10)
+    print("-" * 10)
     print("Completed YouTube sync.")
+
 
 if __name__ == "__main__":
     main()

@@ -1,28 +1,24 @@
 """Maps YouTube videos and Spotify episodes."""
 from datetime import datetime
-from typing import Dict, List
+from typing import Any, Dict, List, Union
 
 from transformations.enrichment import constants
 
 
-def titles_match(
-    youtube_video_title: str, spotify_episode_title: str
-) -> bool:
+def titles_match(youtube_video_title: str, spotify_episode_title: str) -> bool:
     """Performs matching of the titles.
-    
+
     Returns 1 for exact match. Otherwise, can return float between 0 and 1
     for fuzzy matching. Returns 0 if they clearly don't match.
 
     NOTE: first pass can be exact match.
     """
-    return 1 if youtube_video_title == spotify_episode_title else 0
+    return youtube_video_title == spotify_episode_title
 
 
-def channel_names_match(
-    youtube_channel_name: str, spotify_podcast_name: str
-) -> bool:
+def channel_names_match(youtube_channel_name: str, spotify_podcast_name: str) -> bool:
     """Checks to see if the YouTube and Spotify channel/podcast names match.
-    
+
     This doesn't have to be fuzzy match; we should be able to use a hardcoded
     map in order to see if the names are actually matching (first pass can
     just be raw match).
@@ -31,11 +27,10 @@ def channel_names_match(
 
 
 def fuzzy_match_descriptions(
-    youtube_video_description: str,
-    spotify_episode_description: str
+    youtube_video_description: str, spotify_episode_description: str
 ) -> bool:
     """Performs fuzzy matching of the titles.
-    
+
     For first pass, can just do exact matching. Otherwise, later can do
     fuzzy matching.
     """
@@ -43,8 +38,7 @@ def fuzzy_match_descriptions(
 
 
 def youtube_video_and_spotify_episode_posted_same_time(
-    youtube_video_post_date: str,
-    spotify_episode_post_date: str
+    youtube_video_post_date: str, spotify_episode_post_date: str
 ) -> bool:
     """Get the difference in when the videos were posted and see if this
     falls in an acceptable range. Range could vary depending on variety of
@@ -63,9 +57,7 @@ def youtube_video_and_spotify_episode_posted_same_time(
     youtube_post_date_dt = datetime.strptime(
         youtube_video_post_date, "%Y-%m-%dT%H:%M:%SZ"
     )
-    spotify_post_date_dt = datetime.strptime(
-        spotify_episode_post_date, "%Y-%m-%d"
-    )
+    spotify_post_date_dt = datetime.strptime(spotify_episode_post_date, "%Y-%m-%d")
 
     # get the difference between the two, check if it is in acceptable range.
     num_hours_diff = abs(
@@ -76,7 +68,7 @@ def youtube_video_and_spotify_episode_posted_same_time(
 
 def exact_match_youtube_video_to_spotify_episode(
     youtube_video: Dict, spotify_episode: Dict
-) -> int:
+) -> float:
     """Tries an exact comparison between the YouTube and Spotify sources.
     If it can exactly tell that they are identical, then it returns 1.
     If it can exactly tell that they are definitely NOT identical, then it
@@ -87,23 +79,20 @@ def exact_match_youtube_video_to_spotify_episode(
     # we will assume they're not the same.
     if not youtube_video_and_spotify_episode_posted_same_time(
         youtube_video_post_date=youtube_video["published_at"],
-        spotify_episode_post_date=spotify_episode["release_date"]
+        spotify_episode_post_date=spotify_episode["release_date"],
     ):
-        return -1
+        return -1.0
 
     # if podcast name plus episode name are the same, then we can assume
     # that they are the same.
-    if (
-        channel_names_match(
-            youtube_channel_name=youtube_video["channel_title"],
-            spotify_podcast_name=spotify_episode["show_name"]
-        ) and
-        titles_match(
-            youtube_video_title=youtube_video["video_title"],
-            spotify_episode_title=spotify_episode["name"]
-        )
+    if channel_names_match(
+        youtube_channel_name=youtube_video["channel_title"],
+        spotify_podcast_name=spotify_episode["show_name"],
+    ) and titles_match(
+        youtube_video_title=youtube_video["video_title"],
+        spotify_episode_title=spotify_episode["name"],
     ):
-        return 1
+        return 1.0
     return 0
 
 
@@ -111,28 +100,27 @@ def fuzzy_match_youtube_video_to_spotify_episode(
     youtube_video: Dict, spotify_episode: Dict
 ) -> float:
     """Perform fuzzy matching between YouTube and Spotify sources.
-    
+
     Returns a float between 0 and 1 that is a confidence score of the
     linkage.
     """
     titles_match_score = float(
         titles_match(
             youtube_video_title=youtube_video["video_title"],
-            spotify_episode_title=spotify_episode["name"]
+            spotify_episode_title=spotify_episode["name"],
         )
     )
 
     channel_names_match_score = float(
         channel_names_match(
             youtube_channel_name=youtube_video["channel_title"],
-            spotify_podcast_name=spotify_episode["show_name"]
+            spotify_podcast_name=spotify_episode["show_name"],
         )
     )
 
     descriptions_match_score = float(
         fuzzy_match_descriptions(
-            youtube_video_description="",
-            spotify_episode_description=""
+            youtube_video_description="", spotify_episode_description=""
         )
     )
 
@@ -143,29 +131,26 @@ def fuzzy_match_youtube_video_to_spotify_episode(
         [
             score == 0
             for score in [
-                titles_match_score, channel_names_match_score,
-                descriptions_match_score
+                titles_match_score,
+                channel_names_match_score,
+                descriptions_match_score,
             ]
         ]
     ):
-        return 0
+        return 0.0
 
-    return (
-        titles_match_score
-        + channel_names_match_score
-        + descriptions_match_score
-    )
+    return titles_match_score + channel_names_match_score + descriptions_match_score
 
 
 def match_youtube_video_to_spotify_episode(
     youtube_video: Dict,
     spotify_episode: Dict,
     allow_fuzzy_matching: bool = False
-) -> Dict[str, float]:
+) -> Dict[str, Union[str, float]]:
     """Performs a matching between a YouTube video and Spotify episode, to
     get the likelihood (a float between 0 and 1) that they should be
     mapped together.
-    
+
     Algorithm details:
     1. It's likely that a YouTube and a Spotify version of the same podcast
     episode were posted at (around) the same time. Therefore, we can check to
@@ -183,100 +168,117 @@ def match_youtube_video_to_spotify_episode(
     is_exact_match = exact_match_youtube_video_to_spotify_episode(
         youtube_video=youtube_video, spotify_episode=spotify_episode
     )
-
+    match_type: str = "exact" if is_exact_match else "fuzzy"
     if is_exact_match:
         return {
-            "match_type": "exact",
-            "value": is_exact_match # 1 if exact match, -1 if exact no match
+            "match_type": match_type,
+            "value": is_exact_match,  # 1 if exact match, -1 if exact no match
         }
 
     if allow_fuzzy_matching:
         fuzzy_match_score = fuzzy_match_youtube_video_to_spotify_episode(
             youtube_video=youtube_video, spotify_episode=spotify_episode
         )
-        return {
-            "match_type": "fuzzy",
-            "value": fuzzy_match_score
-        }
+        return {"match_type": match_type, "value": fuzzy_match_score}
+    else:
+        return {"match_type": match_type, "value": 0.0}
 
 
-def map_episodes(
+def find_most_likely_spotify_map_to_youtube_videos(
     youtube_videos: List[Dict], spotify_episodes: List[Dict]
-):
-    """Map a given channel's YouTube videos against possible Spotify podcast versions
-    of those same videos.
-    """
-    youtube_to_matching_spotify_episode = {} # youtube_id: spotify_id
-    spotify_to_matching_youtube_video = {} # spotify_id: youtube_id
-
+) -> Dict[str, str]:
+    youtube_to_matching_spotify_episode: Dict[str, str] = {}
     # loop through all the YouTube videos, find most likely Spotify match
     for youtube_video in youtube_videos:
         youtube_id = youtube_video["video_id"]
-        max_matching_score = 0
-        max_matching_id = None
-        has_found_exact_match = False
+        max_matching_score: float = 0.0
+        max_matching_id: str = ""
+        has_found_exact_match: bool = False
         for spotify_episode in spotify_episodes:
             spotify_id = spotify_episode["id"]
             match_dict = match_youtube_video_to_spotify_episode(
                 youtube_video=youtube_video, spotify_episode=spotify_episode
             )
-            match_type = match_dict["match_type"]
-            match_score = match_dict["value"]
+            match_type: str = match_dict["match_type"] # type: ignore
+            match_score: float = match_dict["value"] # type: ignore
             if match_type == "exact":
                 # found exact match
-                if match_score == 1:
+                if match_score == 1.0:
                     has_found_exact_match = True
                     max_matching_id = spotify_id
                 # skip if definitely not a match.
-                elif match_score == -1:
+                elif match_score == -1.0:
                     continue
             else:
-                if match_score != 0 and match_score > max_matching_score:
-                    max_matching_score = matching_score
+                if match_score != 0.0 and match_score > max_matching_score:
+                    max_matching_score = match_score
                     max_matching_id = spotify_id
             if has_found_exact_match:
                 break
         if max_matching_id is not None:
             youtube_to_matching_spotify_episode[youtube_id] = spotify_id
+    return youtube_to_matching_spotify_episode
 
+
+def find_most_likely_youtube_map_to_spotify_episodes(
+    youtube_videos: List[Dict], spotify_episodes: List[Dict]
+) -> Dict[str, str]:
+    spotify_to_matching_youtube_video: Dict[str, str] = {}
     # loop through all the Spotify episodes, find most likely YouTube match
     for spotify_episode in spotify_episodes:
         spotify_id = spotify_episode["id"]
-        max_matching_score = 0
-        max_matching_id = None
-        has_found_exact_match = False
+        max_matching_score: float = 0.0
+        max_matching_id: str = ""
+        has_found_exact_match: bool = False
         for youtube_video in youtube_videos:
             youtube_id = youtube_video["video_id"]
-            matching_score = match_youtube_video_to_spotify_episode(
+            match_dict = match_youtube_video_to_spotify_episode(
                 youtube_video=youtube_video, spotify_episode=spotify_episode
             )
-            match_type = match_dict["match_type"]
-            match_score = match_dict["value"]
+            match_type: str = match_dict["match_type"] # type: ignore
+            match_score: float = match_dict["value"] # type: ignore
             if match_type == "exact":
                 # found exact match
-                if match_score == 1:
+                if match_score == 10:
                     has_found_exact_match = True
                     max_matching_id = youtube_id
                 # skip if definitely not a match.
-                elif match_score == -1:
+                elif match_score == -1.0:
                     continue
             else:
-                if match_score != 0 and match_score > max_matching_score:
-                    max_matching_score = matching_score
+                if match_score != 0.0 and match_score > max_matching_score:
+                    max_matching_score = match_score
                     max_matching_id = youtube_id
             if has_found_exact_match:
                 break
         if max_matching_id is not None:
             spotify_to_matching_youtube_video[spotify_id] = youtube_id
+    return spotify_to_matching_youtube_video
+
+
+def map_episodes(
+    youtube_videos: List[Dict], spotify_episodes: List[Dict]
+) -> List[Dict]:
+    """Map a given channel's YouTube videos against possible Spotify podcast versions
+    of those same videos.
+    """
+    youtube_to_matching_spotify_episode: Dict[str, str] = (
+        find_most_likely_spotify_map_to_youtube_videos(
+            youtube_videos=youtube_videos, spotify_episodes=spotify_episodes
+        )
+    )
+    spotify_to_matching_youtube_video: Dict[str, str] = (
+        find_most_likely_youtube_map_to_spotify_episodes(
+            youtube_videos=youtube_videos, spotify_episodes=spotify_episodes
+        )
+    )
 
     mappings = []
 
     # check for bijective match. If so, add to mappings
     for youtube_id, spotify_id in youtube_to_matching_spotify_episode.items():
         if spotify_to_matching_youtube_video[spotify_id] == youtube_id:
-            mappings.append({
-                "youtube_id": youtube_id, "spotify_id": spotify_id
-            })
+            mappings.append({"youtube_id": youtube_id, "spotify_id": spotify_id})
 
     print(
         f"From {len(youtube_videos)} and {len(spotify_episodes)}, created "

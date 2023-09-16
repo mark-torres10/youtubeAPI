@@ -2,7 +2,9 @@ from typing import Dict
 
 from integrations.spotify.constants import SPOTIFY_LIST_STRING_FIELDS
 from integrations.spotify.models import (
-    get_all_attributes_in_dataclass, SpotifyEpisode, SpotifyShow
+    get_all_attributes_in_dataclass,
+    SpotifyEpisode,
+    SpotifyShow,
 )
 
 
@@ -27,7 +29,7 @@ def create_spotify_episode_instance(
         release_date_precision=metadata["release_date_precision"],
         type=metadata["type"],
         uri=metadata["uri"],
-        synctimestamp=metadata["synctimestamp"]
+        synctimestamp=metadata["synctimestamp"],
     )
     return episode
 
@@ -49,12 +51,11 @@ def create_spotify_show_instance(metadata: Dict) -> SpotifyShow:
         type=metadata["type"],
         uri=metadata["uri"],
         total_episodes=metadata["total_episodes"],
-        episode_ids=[
-            episode["id"] for episode in metadata["episodes"]["items"]
-        ],
-        synctimestamp=metadata["synctimestamp"]
+        episode_ids=[episode["id"] for episode in metadata["episodes"]["items"]],
+        synctimestamp=metadata["synctimestamp"],
     )
     return show
+
 
 def flatten_spotify_episode(episode: SpotifyEpisode) -> Dict:
     """Flatten a `SpotifyEpisode` instance."""

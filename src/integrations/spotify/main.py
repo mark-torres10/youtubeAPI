@@ -7,7 +7,8 @@ from integrations.spotify.client import SpotifyClient
 from integrations.spotify.constants import SPOTIFY_SHOW_NAME_TO_ID_MAP
 from integrations.spotify.sqlite_helper import write_spotify_data_to_db
 
-def main():
+
+def main() -> None:
     client = SpotifyClient()
     for show_name, show_id in SPOTIFY_SHOW_NAME_TO_ID_MAP.items():
         show_metadata = client.get_podcast_show_metadata(show_id=show_id)
@@ -19,7 +20,7 @@ def main():
             helper.create_spotify_episode_instance(
                 metadata=episode_metadata,
                 show_id=show_metadata["id"],
-                show_name=show_metadata["name"]
+                show_name=show_metadata["name"],
             )
             for episode_metadata in episode_metadata_list
         ]
@@ -31,7 +32,7 @@ def main():
             f"{show_name} with id={show_id}. Added {len(spotify_episodes)} "
             f"episodes to DB for show {show_name}"
         )
-    print('-' * 10)
+    print("-" * 10)
     print("Completed Spotify sync.")
 
 

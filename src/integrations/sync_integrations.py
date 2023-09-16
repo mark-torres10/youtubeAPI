@@ -2,6 +2,7 @@
 from integrations.spotify import main as spotify_sync
 from integrations.youtube import main as youtube_sync
 
-def main():
+
+def main() -> None:
     youtube_sync.main()
     spotify_sync.main()

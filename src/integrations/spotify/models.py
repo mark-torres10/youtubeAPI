@@ -1,19 +1,20 @@
 """Wrapper dataclass to store Spotify data."""
 from dataclasses import dataclass, fields
-from typing import List
+from typing import List, Type
 
 
 @dataclass
 class SpotifyEpisode:
     """Class that keeps track of episode-specific information for an episode
     of a Spotify podcast/show.
-    
+
     See https://developer.spotify.com/documentation/web-api/reference/get-a-show
     and https://developer.spotify.com/documentation/web-api/reference/get-a-shows-episodes
-    """ # noqa
+    """  # noqa
+
     __table_name__ = "spotify_episode"
-    id: str # primary key
-    show_id: str # foreign key
+    id: str  # primary key
+    show_id: str  # foreign key
     show_name: str
     audio_preview_url: str
     description: str
@@ -27,7 +28,7 @@ class SpotifyEpisode:
     name: str
     release_date: str
     release_date_precision: str
-    type: str # only 1 possible value, "episode"
+    type: str  # only 1 possible value, "episode"
     uri: str
     synctimestamp: str
 
@@ -35,11 +36,12 @@ class SpotifyEpisode:
 @dataclass
 class SpotifyShow:
     """Class that keeps track of metadata for a given Spotify podcast/show.
-    
+
     Reference: https://developer.spotify.com/documentation/web-api/reference/get-a-show
-    """ # noqa
+    """  # noqa
+
     __table_name__ = "spotify_show"
-    id: str # primary key
+    id: str  # primary key
     available_markets: List[str]
     copyrights: List[str]
     description: str
@@ -51,12 +53,12 @@ class SpotifyShow:
     media_type: str
     name: str
     publisher: str
-    type: str # only 1 possible value, "show"
+    type: str  # only 1 possible value, "show"
     uri: str
     total_episodes: int
-    episode_ids: List[str] # contains the IDs of the episodes
+    episode_ids: List[str]  # contains the IDs of the episodes
     synctimestamp: str
 
 
-def get_all_attributes_in_dataclass(cls) -> List[str]:
+def get_all_attributes_in_dataclass(cls: Type) -> List[str]:
     return [field.name for field in fields(cls)]

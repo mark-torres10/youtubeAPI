@@ -18,6 +18,7 @@ cursor = conn.cursor()
 test_conn = sqlite3.connect(TEST_DB_NAME)
 test_cursor = test_conn.cursor()
 
+
 def generate_create_table_statement(table_name: str) -> str:
     schema = TABLE_NAME_TO_SCHEMA_MAP[table_name]
     return f"""
@@ -28,19 +29,14 @@ def generate_create_table_statement(table_name: str) -> str:
 
 
 def create_table(
-    conn: sqlite3.Connection,
-    cursor: sqlite3.Cursor,
-    table_name: str
+    conn: sqlite3.Connection, cursor: sqlite3.Cursor, table_name: str
 ) -> None:
     create_table_statement = generate_create_table_statement(table_name)
     cursor.execute(create_table_statement)
     conn.commit()
 
 
-def check_if_table_exists(
-    cursor: sqlite3.Cursor,
-    table_name: str
-) -> bool:
+def check_if_table_exists(cursor: sqlite3.Cursor, table_name: str) -> bool:
     query = f"SELECT name FROM sqlite_master WHERE type='table' AND name=?"
     cursor.execute(query, (table_name,))
     result = cursor.fetchone()
@@ -48,17 +44,12 @@ def check_if_table_exists(
 
 
 def write_to_database(
-    conn: sqlite3.Connection,
-    cursor: sqlite3.Cursor,
-    table_name: str,
-    data: Dict
+    conn: sqlite3.Connection, cursor: sqlite3.Cursor, table_name: str, data: Dict
 ) -> None:
-    columns = ', '.join(data.keys())
-    placeholders = ', '.join(['?'] * len(data))
+    columns = ", ".join(data.keys())
+    placeholders = ", ".join(["?"] * len(data))
     values = tuple(data.values())
-    insert_query = (
-        f'INSERT INTO {table_name} ({columns}) VALUES ({placeholders})'
-    )
+    insert_query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
     cursor.execute(insert_query, values)
     conn.commit()
 
@@ -72,7 +63,7 @@ def get_column(table_name: str, column: str) -> List:
 
 def single_row_insertion_is_valid(row_data: Dict, table_name: str) -> bool:
     """Check if the data should be inserted into SQLite DB.
-    
+
     Shouldn't be inserted if the PK of the data isn't unique in the DB.
     Function is generic enough if we want to add extra checks.
 
@@ -81,12 +72,10 @@ def single_row_insertion_is_valid(row_data: Dict, table_name: str) -> bool:
     table_pk = TABLE_NAME_TO_KEYS_MAP[table_name]["primary"][0]
     row_pk_value = row_data.get(table_pk, None)
     if row_pk_value is None:
-        print(
-            f"Insertion into {table_name} invalid: data lacks {table_pk} PK."
-        )
+        print(f"Insertion into {table_name} invalid: data lacks {table_pk} PK.")
         return False
     col = get_column(table_name=table_name, column=table_pk)
-    return row_pk_value not in col # only insert if PK is unique.
+    return row_pk_value not in col  # only insert if PK is unique.
 
 
 def get_all_table_results_as_df(table_name: str) -> pd.DataFrame:

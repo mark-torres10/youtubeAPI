@@ -64,25 +64,13 @@ TABLE_NAME_TO_SCHEMA_MAP = {
         type TEXT,
         uri TEXT,
         synctimestamp TEXT
-    """ # noqa
+    """,  # noqa
 }
 
 
 TABLE_NAME_TO_KEYS_MAP = {
-    "channels": {
-        "primary": ["channel_id"],
-        "foreign": None
-    },
-    "videos": {
-        "primary": ["video_id"],
-        "foreign": ["channel_id"]
-    },
-    "spotify_show": {
-        "primary": ["id"],
-        "foreign": ["episode_ids"]
-    },
-    "spotify_episode": {
-        "primary": ["id"],
-        "foreign": ["show_id"]
-    }
+    "channels": {"primary": ["channel_id"], "foreign": None},
+    "videos": {"primary": ["video_id"], "foreign": ["channel_id"]},
+    "spotify_show": {"primary": ["id"], "foreign": ["episode_ids"]},
+    "spotify_episode": {"primary": ["id"], "foreign": ["show_id"]},
 }

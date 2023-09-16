@@ -7,9 +7,7 @@ from integrations.youtube.helper import flatten_video
 from integrations.youtube.models import YoutubeChannel, YoutubeVideo
 
 
-def write_youtube_data_to_db(
-    instance: Union[YoutubeChannel, YoutubeVideo]
-) -> None:
+def write_youtube_data_to_db(instance: Union[YoutubeChannel, YoutubeVideo]) -> None:
     """Writes either the Channel or Video instance to their respective
     SQLite tables."""
     table_name = instance.__table_name__
@@ -17,7 +15,7 @@ def write_youtube_data_to_db(
         instance_dict = flatten_video(instance)
     else:
         instance_dict = instance.__dict__
-    instance_dict.pop('__table_name__', None)
+    instance_dict.pop("__table_name__", None)
 
     if not helper.check_if_table_exists(cursor=cursor, table_name=table_name):
         helper.create_table(conn=conn, cursor=cursor, table_name=table_name)

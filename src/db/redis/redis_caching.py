@@ -10,17 +10,14 @@ redis-server ./redis.conf
 ```
 """
 import json
-from typing import Dict
+from typing import Dict, Union
 
 import redis
 
-from db.redis.constants import (
-    DEFAULT_CACHE_TIME_SECONDS, REDIS_HOST, REDIS_PORT
-)
+from db.redis.constants import DEFAULT_CACHE_TIME_SECONDS, REDIS_HOST, REDIS_PORT
 
-redis_conn = redis.Redis(
-    host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True
-)
+redis_conn = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True)
+
 
 def cache_key(function_name: str, params: Dict) -> str:
     """Generate a cache key based on the API endpoint and parameters."""
@@ -28,21 +25,23 @@ def cache_key(function_name: str, params: Dict) -> str:
     params_str = json.dumps(params, sort_keys=True)
     return f"{function_name}:{params_str}"
 
+
 def cache_data(function_name: str, params: Dict, data: Dict) -> None:
     """Cache the API response data in Redis."""
     key = cache_key(function_name, params)
     data_str = json.dumps(data)
-    redis_conn.setex(
-        key, DEFAULT_CACHE_TIME_SECONDS, data_str
-    )
+    redis_conn.setex(key, DEFAULT_CACHE_TIME_SECONDS, data_str)
 
-def get_cached_data(function_name: str, params: Dict) -> Dict:
+
+def get_cached_data(function_name: str, params: Dict) -> Union[Dict, None]:
     """Retrieve cached data from Redis if available."""
     key = cache_key(function_name, params)
     cached_data = redis_conn.get(key)
     if cached_data is not None:
         return json.loads(cached_data)
-    print(f"Cached data not found for function {function_name} and params {params}") # noqa
+    print(
+        f"Cached data not found for function {function_name} and params {params}"
+    )  # noqa
     return None
 
 

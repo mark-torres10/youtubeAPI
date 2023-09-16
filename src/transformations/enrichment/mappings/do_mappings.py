@@ -1,23 +1,24 @@
 """Map podcast information across different integrations."""
+from typing import List
+
 from transformations.enrichment.mappings import helper
 from transformations.enrichment.mappings.map_channels import map_channels
 from transformations.enrichment.mappings.map_episodes import map_episodes
-from transformations.enrichment.mappings.sqlite_helper import (
-    write_mapped_data_to_db
-)
+from transformations.enrichment.mappings.sqlite_helper import write_mapped_data_to_db
 
-def main():
+
+def main() -> None:
     """Creates unified definitions of podcast channels and episodes across
     different integrations by mapping them together."""
-    CHANNELS = []
+    CHANNELS: List[str] = []
     for channel in CHANNELS:
         consolidated_channel_metadata = map_channels(channel)
-        youtube_video_ids = (
-            consolidated_channel_metadata["youtube_channel"]["episode_ids"]
-        )
-        spotify_episode_ids = (
-            consolidated_channel_metadata["spotify_channel"]["episode_ids"]
-        )
+        youtube_video_ids = consolidated_channel_metadata["youtube_channel"][
+            "episode_ids"
+        ]
+        spotify_episode_ids = consolidated_channel_metadata["spotify_channel"][
+            "episode_ids"
+        ]
 
         youtube_videos = helper.get_youtube_videos(youtube_video_ids)
         spotify_episodes = helper.get_spotify_episodes(spotify_episode_ids)
@@ -31,12 +32,10 @@ def main():
         )
         write_mapped_data_to_db(mapped_channel)
         for episode in mapped_episodes:
-            mapped_episode = helper.create_mapped_episode_instance(
-                episode
-            )
+            mapped_episode = helper.create_mapped_episode_instance(episode)
             write_mapped_data_to_db(mapped_episode)
 
-    print("Completed mapping podcasts across YouTube and Spotify integrations.") # noqa
+    print("Completed mapping podcasts across YouTube and Spotify integrations.")  # noqa
 
 
 if __name__ == "__main__":

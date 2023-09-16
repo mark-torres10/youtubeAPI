@@ -1,0 +1,36 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile
+    ports:
+      - "3000:3000" # Expose React app on port 3000
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    ports:
+      - "8000:8000" # Expose Django backend on port 8000
+    volumes:
+      - ./src:/app/src # Mount the entire project directory
+
+  redis:
+    build:
+      context: .
+      dockerfile: redis.Dockerfile
+    ports:
+      - "6379:6379" # Expose Redis on port 6379
+
+  airflow:
+    build:
+      context: .
+      dockerfile: airflow.Dockerfile
+    ports:
+      - "8080:8080" # Expose Airflow web UI on port 8080
+    volumes:
+      - ./src:/app # Mount the entire project directory
+    command: ["airflow", "webserver", "--port", "8080"]

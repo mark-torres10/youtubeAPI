@@ -1,3 +1,4 @@
+from dataclasses import asdict
 from typing import Dict, List
 
 import pandas as pd
@@ -55,10 +56,10 @@ def create_mapped_channel_instance(metadata: Dict) -> MappedChannel:
 
 
 def create_mapped_episode_instance(metadata: Dict) -> MappedEpisode:
-    youtube_episode= MappedChannelIntegrationMetadata(
+    youtube_episode= MappedEpisodeIntegrationMetadata(
         metadata["youtube_episoode"]
     )
-    spotify_episode = MappedChannelIntegrationMetadata(
+    spotify_episode = MappedEpisodeIntegrationMetadata(
         metadata["spotify_episode"]
     )
     mapped_episode = MappedEpisode(
@@ -69,3 +70,38 @@ def create_mapped_episode_instance(metadata: Dict) -> MappedEpisode:
         spotify_episode=spotify_episode
     )
     return mapped_episode
+
+
+def flatten_mapped_channel(mapped_channel: MappedChannel) -> Dict:
+    return {
+        **{
+            "consolidated_name": mapped_channel.consolidated_name,
+            "last_updated_timestamp": mapped_channel.last_updated_timestamp,
+        },
+        **{
+            f"youtube_channel_{key}": value
+            for key, value in asdict(mapped_channel.youtube_channel).items()
+        },
+        **{
+            f"spotify_channel_{key}": value
+            for key, value in asdict(mapped_channel.spotify_channel).items()
+        }
+    }
+
+
+def flatten_mapped_episode(mapped_episode: MappedEpisode) -> Dict:
+    return {
+        **{
+            "consolidated_name": mapped_episode.consolidated_name,
+            "mapped_channel_name": mapped_episode.mapped_channel_name,
+            "consolidated_description": mapped_episode.consolidated_description,
+        },
+        **{
+            f"youtube_episode_{key}": value
+            for key, value in asdict(mapped_episode.youtube_episode).items()
+        },
+        **{
+            f"spotify_episode_{key}": value
+            for key, value in asdict(mapped_episode.spotify_episode).items()
+        }
+    }

@@ -1,3 +1,4 @@
+apache_airflow==2.6.0
 backports.zoneinfo==0.2.1;python_version<"3.9"
 black==23.9.1
 django==4.2.5
@@ -17,5 +18,5 @@ python-dotenv==1.0.0
 redis==5.0.0
 requests==2.31.0
 spotipy==2.23.0
-sqlalchemy==2.0.20
+sqlalchemy==1.4.49
 tokenize-rt==5.2.0

@@ -4,16 +4,64 @@
 #
 #    pip-compile requirements.in
 #
+aiohttp==3.8.5
+    # via apache-airflow-providers-http
+aiosignal==1.3.1
+    # via aiohttp
+alembic==1.12.0
+    # via apache-airflow
+annotated-types==0.5.0
+    # via pydantic
+anyio==4.0.0
+    # via httpcore
+apache-airflow==2.6.0
+    # via
+    #   -r requirements.in
+    #   apache-airflow-providers-common-sql
+    #   apache-airflow-providers-ftp
+    #   apache-airflow-providers-http
+    #   apache-airflow-providers-imap
+    #   apache-airflow-providers-sqlite
+apache-airflow-providers-common-sql==1.7.2
+    # via
+    #   apache-airflow
+    #   apache-airflow-providers-sqlite
+apache-airflow-providers-ftp==3.5.2
+    # via apache-airflow
+apache-airflow-providers-http==4.5.2
+    # via apache-airflow
+apache-airflow-providers-imap==3.3.2
+    # via apache-airflow
+apache-airflow-providers-sqlite==3.4.3
+    # via apache-airflow
+apispec[yaml]==5.2.2
+    # via flask-appbuilder
 appnope==0.1.3
     # via
     #   ipykernel
     #   ipython
+argcomplete==3.1.1
+    # via apache-airflow
 asgiref==3.7.2
-    # via django
+    # via
+    #   apache-airflow
+    #   apache-airflow-providers-http
+    #   django
 asttokens==2.4.0
     # via stack-data
 async-timeout==4.0.3
-    # via redis
+    # via
+    #   aiohttp
+    #   redis
+attrs==23.1.0
+    # via
+    #   aiohttp
+    #   apache-airflow
+    #   cattrs
+    #   jsonschema
+    #   referencing
+babel==2.12.1
+    # via flask-babel
 backcall==0.2.0
     # via ipython
 backports-zoneinfo==0.2.1 ; python_version < "3.9"
@@ -22,36 +70,124 @@ backports-zoneinfo==0.2.1 ; python_version < "3.9"
     #   django
 black==23.9.1
     # via -r requirements.in
+blinker==1.6.2
+    # via apache-airflow
 build==1.0.3
     # via pip-tools
+cachelib==0.9.0
+    # via
+    #   flask-caching
+    #   flask-session
 cachetools==5.3.1
     # via google-auth
+cattrs==23.1.2
+    # via apache-airflow
 certifi==2023.7.22
-    # via requests
+    # via
+    #   httpcore
+    #   httpx
+    #   requests
+cffi==1.15.1
+    # via cryptography
 cfgv==3.4.0
     # via pre-commit
 charset-normalizer==3.2.0
-    # via requests
+    # via
+    #   aiohttp
+    #   requests
 click==8.1.7
     # via
     #   black
+    #   clickclick
+    #   flask
+    #   flask-appbuilder
     #   pip-tools
+clickclick==20.10.2
+    # via connexion
+colorama==0.4.6
+    # via flask-appbuilder
+colorlog==4.8.0
+    # via apache-airflow
 comm==0.1.4
     # via ipykernel
+configupdater==3.1.1
+    # via apache-airflow
+connexion[flask]==2.14.2
+    # via apache-airflow
+cron-descriptor==1.4.0
+    # via apache-airflow
+croniter==1.4.1
+    # via apache-airflow
+cryptography==41.0.3
+    # via apache-airflow
 debugpy==1.8.0
     # via ipykernel
 decorator==5.1.1
     # via ipython
+deprecated==1.2.14
+    # via
+    #   apache-airflow
+    #   limits
+dill==0.3.7
+    # via apache-airflow
 distlib==0.3.7
     # via virtualenv
 django==4.2.5
     # via -r requirements.in
+dnspython==2.4.2
+    # via email-validator
+docutils==0.20.1
+    # via python-daemon
+email-validator==1.3.1
+    # via flask-appbuilder
 exceptiongroup==1.1.3
-    # via pytest
+    # via
+    #   anyio
+    #   cattrs
+    #   pytest
 executing==1.2.0
     # via stack-data
 filelock==3.12.4
     # via virtualenv
+flask==2.2.5
+    # via
+    #   apache-airflow
+    #   connexion
+    #   flask-appbuilder
+    #   flask-babel
+    #   flask-caching
+    #   flask-jwt-extended
+    #   flask-limiter
+    #   flask-login
+    #   flask-session
+    #   flask-sqlalchemy
+    #   flask-wtf
+flask-appbuilder==4.3.0
+    # via apache-airflow
+flask-babel==2.0.0
+    # via flask-appbuilder
+flask-caching==2.0.2
+    # via apache-airflow
+flask-jwt-extended==4.5.2
+    # via flask-appbuilder
+flask-limiter==3.5.0
+    # via flask-appbuilder
+flask-login==0.6.2
+    # via
+    #   apache-airflow
+    #   flask-appbuilder
+flask-session==0.5.0
+    # via apache-airflow
+flask-sqlalchemy==2.5.1
+    # via flask-appbuilder
+flask-wtf==1.1.1
+    # via
+    #   apache-airflow
+    #   flask-appbuilder
+frozenlist==1.4.0
+    # via
+    #   aiohttp
+    #   aiosignal
 google-api-core==2.11.1
     # via google-api-python-client
 google-api-python-client==2.99.0
@@ -70,38 +206,131 @@ google-auth-oauthlib==1.1.0
     # via -r requirements.in
 googleapis-common-protos==1.60.0
     # via google-api-core
+graphviz==0.20.1
+    # via apache-airflow
 greenlet==2.0.2
     # via sqlalchemy
+gunicorn==21.2.0
+    # via apache-airflow
+h11==0.14.0
+    # via httpcore
+httpcore==0.18.0
+    # via httpx
 httplib2==0.22.0
     # via
     #   google-api-python-client
     #   google-auth-httplib2
+httpx==0.25.0
+    # via apache-airflow
 identify==2.5.29
     # via pre-commit
 idna==3.4
-    # via requests
-importlib-metadata==6.8.0
     # via
+    #   anyio
+    #   email-validator
+    #   httpx
+    #   requests
+    #   yarl
+importlib-metadata==4.13.0
+    # via
+    #   alembic
+    #   apache-airflow
     #   build
+    #   flask
     #   jupyter-client
+    #   markdown
+importlib-resources==6.0.1
+    # via
+    #   alembic
+    #   apache-airflow
+    #   jsonschema
+    #   jsonschema-specifications
+    #   limits
+inflection==0.5.1
+    # via connexion
 iniconfig==2.0.0
     # via pytest
 ipykernel==6.25.2
     # via -r requirements.in
 ipython==8.12.2
     # via ipykernel
+itsdangerous==2.1.2
+    # via
+    #   apache-airflow
+    #   connexion
+    #   flask
+    #   flask-wtf
 jedi==0.19.0
     # via ipython
+jinja2==3.1.2
+    # via
+    #   apache-airflow
+    #   flask
+    #   flask-babel
+    #   python-nvd3
+jsonschema==4.19.0
+    # via
+    #   apache-airflow
+    #   connexion
+    #   flask-appbuilder
+jsonschema-specifications==2023.7.1
+    # via jsonschema
 jupyter-client==8.3.1
     # via ipykernel
 jupyter-core==5.3.1
     # via
     #   ipykernel
     #   jupyter-client
+lazy-object-proxy==1.9.0
+    # via apache-airflow
+limits==3.6.0
+    # via flask-limiter
+linkify-it-py==2.0.2
+    # via apache-airflow
+lockfile==0.12.2
+    # via
+    #   apache-airflow
+    #   python-daemon
+mako==1.2.4
+    # via alembic
+markdown==3.4.4
+    # via apache-airflow
+markdown-it-py==3.0.0
+    # via
+    #   apache-airflow
+    #   mdit-py-plugins
+    #   rich
+markupsafe==2.1.3
+    # via
+    #   apache-airflow
+    #   jinja2
+    #   mako
+    #   werkzeug
+    #   wtforms
+marshmallow==3.20.1
+    # via
+    #   flask-appbuilder
+    #   marshmallow-enum
+    #   marshmallow-oneofschema
+    #   marshmallow-sqlalchemy
+marshmallow-enum==1.5.1
+    # via flask-appbuilder
+marshmallow-oneofschema==3.0.1
+    # via apache-airflow
+marshmallow-sqlalchemy==0.26.1
+    # via flask-appbuilder
 matplotlib-inline==0.1.6
     # via
     #   ipykernel
     #   ipython
+mdit-py-plugins==0.4.0
+    # via apache-airflow
+mdurl==0.1.2
+    # via markdown-it-py
+multidict==6.0.4
+    # via
+    #   aiohttp
+    #   yarl
 mypy==1.5.1
     # via -r requirements.in
 mypy-extensions==1.0.0
@@ -120,33 +349,50 @@ oauthlib==3.2.2
     # via
     #   -r requirements.in
     #   requests-oauthlib
+ordered-set==4.1.0
+    # via flask-limiter
 packaging==23.1
     # via
+    #   apache-airflow
     #   black
     #   build
+    #   connexion
+    #   gunicorn
     #   ipykernel
+    #   limits
+    #   marshmallow
     #   pytest
 pandas==2.0.3
     # via -r requirements.in
 parso==0.8.3
     # via jedi
-pathspec==0.11.2
-    # via black
+pathspec==0.9.0
+    # via
+    #   apache-airflow
+    #   black
+pendulum==2.1.2
+    # via apache-airflow
 pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
 pip-tools==7.3.0
     # via -r requirements.in
+pkgutil-resolve-name==1.3.10
+    # via jsonschema
 platformdirs==3.10.0
     # via
     #   black
     #   jupyter-core
     #   virtualenv
 pluggy==1.3.0
-    # via pytest
+    # via
+    #   apache-airflow
+    #   pytest
 pre-commit==3.4.0
     # via -r requirements.in
+prison==0.2.1
+    # via flask-appbuilder
 prompt-toolkit==3.0.39
     # via ipython
 protobuf==4.24.3
@@ -154,7 +400,9 @@ protobuf==4.24.3
     #   google-api-core
     #   googleapis-common-protos
 psutil==5.9.5
-    # via ipykernel
+    # via
+    #   apache-airflow
+    #   ipykernel
 psycopg2-binary==2.9.7
     # via -r requirements.in
 ptyprocess==0.7.0
@@ -167,24 +415,59 @@ pyasn1==0.5.0
     #   rsa
 pyasn1-modules==0.3.0
     # via google-auth
+pycparser==2.21
+    # via cffi
+pydantic==2.3.0
+    # via apache-airflow
+pydantic-core==2.6.3
+    # via pydantic
 pygments==2.16.1
-    # via ipython
+    # via
+    #   apache-airflow
+    #   ipython
+    #   rich
+pyjwt==2.8.0
+    # via
+    #   apache-airflow
+    #   flask-appbuilder
+    #   flask-jwt-extended
 pyparsing==3.1.1
     # via httplib2
 pyproject-hooks==1.0.0
     # via build
 pytest==7.4.2
     # via -r requirements.in
+python-daemon==3.0.1
+    # via apache-airflow
 python-dateutil==2.8.2
     # via
+    #   apache-airflow
+    #   croniter
+    #   flask-appbuilder
     #   jupyter-client
     #   pandas
+    #   pendulum
 python-dotenv==1.0.0
     # via -r requirements.in
+python-nvd3==0.15.0
+    # via apache-airflow
+python-slugify==8.0.1
+    # via
+    #   apache-airflow
+    #   python-nvd3
 pytz==2023.3.post1
-    # via pandas
+    # via
+    #   babel
+    #   flask-babel
+    #   pandas
+pytzdata==2020.1
+    # via pendulum
 pyyaml==6.0.1
-    # via pre-commit
+    # via
+    #   apispec
+    #   clickclick
+    #   connexion
+    #   pre-commit
 pyzmq==25.1.1
     # via
     #   ipykernel
@@ -193,29 +476,82 @@ redis==5.0.0
     # via
     #   -r requirements.in
     #   spotipy
+referencing==0.30.2
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
 requests==2.31.0
     # via
     #   -r requirements.in
+    #   apache-airflow-providers-http
+    #   connexion
     #   google-api-core
     #   requests-oauthlib
+    #   requests-toolbelt
     #   spotipy
 requests-oauthlib==1.3.1
     # via google-auth-oauthlib
+requests-toolbelt==1.0.0
+    # via apache-airflow-providers-http
+rfc3339-validator==0.1.4
+    # via apache-airflow
+rich==13.5.2
+    # via
+    #   apache-airflow
+    #   flask-limiter
+    #   rich-argparse
+rich-argparse==1.3.0
+    # via apache-airflow
+rpds-py==0.10.3
+    # via
+    #   jsonschema
+    #   referencing
 rsa==4.9
     # via google-auth
+setproctitle==1.3.2
+    # via apache-airflow
 six==1.16.0
     # via
     #   asttokens
+    #   prison
     #   python-dateutil
+    #   rfc3339-validator
     #   spotipy
+sniffio==1.3.0
+    # via
+    #   anyio
+    #   httpcore
+    #   httpx
 spotipy==2.23.0
     # via -r requirements.in
-sqlalchemy==2.0.20
-    # via -r requirements.in
+sqlalchemy==1.4.49
+    # via
+    #   -r requirements.in
+    #   alembic
+    #   apache-airflow
+    #   flask-appbuilder
+    #   flask-sqlalchemy
+    #   marshmallow-sqlalchemy
+    #   sqlalchemy-jsonfield
+    #   sqlalchemy-utils
+sqlalchemy-jsonfield==1.0.1.post0
+    # via apache-airflow
+sqlalchemy-utils==0.41.1
+    # via flask-appbuilder
 sqlparse==0.4.4
-    # via django
+    # via
+    #   apache-airflow-providers-common-sql
+    #   django
 stack-data==0.6.2
     # via ipython
+tabulate==0.9.0
+    # via apache-airflow
+tenacity==8.2.3
+    # via apache-airflow
+termcolor==2.3.0
+    # via apache-airflow
+text-unidecode==1.3
+    # via python-slugify
 tokenize-rt==5.2.0
     # via -r requirements.in
 tomli==2.0.1
@@ -240,13 +576,25 @@ traitlets==5.10.0
     #   matplotlib-inline
 typing-extensions==4.7.1
     # via
+    #   alembic
+    #   annotated-types
+    #   apache-airflow
     #   asgiref
     #   black
+    #   cattrs
+    #   flask-limiter
     #   ipython
+    #   limits
     #   mypy
-    #   sqlalchemy
+    #   pydantic
+    #   pydantic-core
+    #   rich
 tzdata==2023.3
     # via pandas
+uc-micro-py==1.0.2
+    # via linkify-it-py
+unicodecsv==0.14.1
+    # via apache-airflow
 uritemplate==4.1.1
     # via google-api-python-client
 urllib3==1.26.16
@@ -258,10 +606,27 @@ virtualenv==20.24.5
     # via pre-commit
 wcwidth==0.2.6
     # via prompt-toolkit
+werkzeug==2.2.3
+    # via
+    #   apache-airflow
+    #   connexion
+    #   flask
+    #   flask-jwt-extended
+    #   flask-login
 wheel==0.41.2
     # via pip-tools
+wrapt==1.15.0
+    # via deprecated
+wtforms==3.0.1
+    # via
+    #   flask-appbuilder
+    #   flask-wtf
+yarl==1.9.2
+    # via aiohttp
 zipp==3.16.2
-    # via importlib-metadata
+    # via
+    #   importlib-metadata
+    #   importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip

@@ -1,12 +1,22 @@
 from rest_framework import serializers
-from .models import Channel, Episode
+from .models import MappedChannelIntegrationMetadata, MappedChannel, MappedEpisodeIntegrationMetadata, MappedEpisode
 
-class ChannelSerializer(serializers.ModelSerializer):
+class MappedChannelIntegrationMetadataSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Channel
+        model = MappedChannelIntegrationMetadata
         fields = '__all__'
 
-class EpisodeSerializer(serializers.ModelSerializer):
+class MappedChannelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Episode
+        model = MappedChannel
+        fields = '__all__'
+
+class MappedEpisodeIntegrationMetadataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MappedEpisodeIntegrationMetadata
+        fields = '__all__'
+
+class MappedEpisodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MappedEpisode
         fields = '__all__'

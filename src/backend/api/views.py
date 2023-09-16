@@ -1,11 +1,11 @@
 from rest_framework import generics
-from .models import Channel, Episode
-from .serializers import ChannelSerializer, EpisodeSerializer
+from .models import MappedChannel, MappedEpisode
+from .serializers import MappedChannelSerializer, MappedEpisodeSerializer
 
-class ChannelList(generics.ListCreateAPIView):
-    queryset = Channel.objects.all()
-    serializer_class = ChannelSerializer
+class MappedChannelList(generics.ListAPIView):
+    queryset = MappedChannel.objects.all()
+    serializer_class = MappedChannelSerializer
 
-class EpisodeList(generics.ListCreateAPIView):
-    queryset = Episode.objects.all()
-    serializer_class = EpisodeSerializer
+class MappedEpisodeList(generics.ListAPIView):
+    queryset = MappedEpisode.objects.all()
+    serializer_class = MappedEpisodeSerializer

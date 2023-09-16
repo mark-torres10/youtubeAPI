@@ -1,30 +1,56 @@
-import './App.css';
-
 import React, { useState } from 'react';
-import './App.css';
+import axios from 'axios';
 
 function App() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [showChannels, setShowChannels] = useState(false);
+  const [showEpisodes, setShowEpisodes] = useState(false);
+  const [channels, setChannels] = useState([]);
+  const [episodes, setEpisodes] = useState([]);
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
+  const fetchChannels = () => {
+    axios.get('/api/channels/')
+      .then((response) => {
+        setChannels(response.data);
+        setShowChannels(true);
+      })
+      .catch((error) => {
+        console.error('Error fetching channels:', error);
+      });
   };
 
-  const handleSearchSubmit = () => {
-    // Handle the search here (we'll add this functionality later)
-    console.log('Searching for:', searchTerm);
+  const fetchEpisodes = () => {
+    axios.get('/api/episodes/')
+      .then((response) => {
+        setEpisodes(response.data);
+        setShowEpisodes(true);
+      })
+      .catch((error) => {
+        console.error('Error fetching episodes:', error);
+      });
   };
 
   return (
     <div className="App">
-      <h1>Search App</h1>
-      <input
-        type="text"
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={handleSearchChange}
-      />
-      <button onClick={handleSearchSubmit}>Search</button>
+      <div>
+        <button onClick={fetchChannels}>Fetch Channels</button>
+        <button onClick={fetchEpisodes}>Fetch Episodes</button>
+      </div>
+      {showChannels && (
+        <div>
+          <h2>Channels</h2>
+          <table>
+            {/* Render table rows for channels */}
+          </table>
+        </div>
+      )}
+      {showEpisodes && (
+        <div>
+          <h2>Episodes</h2>
+          <table>
+            {/* Render table rows for episodes */}
+          </table>
+        </div>
+      )}
     </div>
   );
 }

@@ -6,7 +6,9 @@ from integrations.spotify import helper
 from integrations.spotify.client import SpotifyClient
 from integrations.spotify.constants import SPOTIFY_SHOW_NAME_TO_ID_MAP
 from integrations.spotify.sqlite_helper import write_spotify_data_to_db
+from lib.log.logger import Logger
 
+logger = Logger()
 
 def main() -> None:
     client = SpotifyClient()
@@ -27,13 +29,13 @@ def main() -> None:
         write_spotify_data_to_db(spotify_show)
         for episode in spotify_episodes:
             write_spotify_data_to_db(episode)
-        print(
+        logger.info(
             "Completed getting updated channel and episode data for show"
             f"{show_name} with id={show_id}. Added {len(spotify_episodes)} "
             f"episodes to DB for show {show_name}"
         )
-    print("-" * 10)
-    print("Completed Spotify sync.")
+    logger.info("-" * 10)
+    logger.info("Completed Spotify sync.")
 
 
 if __name__ == "__main__":

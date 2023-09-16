@@ -5,6 +5,7 @@ from typing import Dict, List
 import pandas as pd
 
 from db.sql.constants import TABLE_NAME_TO_KEYS_MAP, TABLE_NAME_TO_SCHEMA_MAP
+from lib.log.logger import Logger
 
 current_file_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -17,6 +18,8 @@ cursor = conn.cursor()
 
 test_conn = sqlite3.connect(TEST_DB_NAME)
 test_cursor = test_conn.cursor()
+
+logger = Logger()
 
 
 def generate_create_table_statement(table_name: str) -> str:
@@ -72,7 +75,7 @@ def single_row_insertion_is_valid(row_data: Dict, table_name: str) -> bool:
     table_pk = TABLE_NAME_TO_KEYS_MAP[table_name]["primary"][0]
     row_pk_value = row_data.get(table_pk, None)
     if row_pk_value is None:
-        print(f"Insertion into {table_name} invalid: data lacks {table_pk} PK.")
+        logger.warning(f"Insertion into {table_name} invalid: data lacks {table_pk} PK.")
         return False
     col = get_column(table_name=table_name, column=table_pk)
     return row_pk_value not in col  # only insert if PK is unique.

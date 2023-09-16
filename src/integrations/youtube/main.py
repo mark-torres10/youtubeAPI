@@ -6,7 +6,9 @@ tables.
 from integrations.youtube import constants, helper
 from integrations.youtube.client import YoutubeClient
 from integrations.youtube.sqlite_helper import write_youtube_data_to_db
+from lib.log.logger import Logger
 
+logger = Logger()
 
 def main() -> None:
     client = YoutubeClient()
@@ -25,13 +27,13 @@ def main() -> None:
         write_youtube_data_to_db(channel)
         for video in videos:
             write_youtube_data_to_db(video)
-        print(
+        logger.info(
             "Completed getting updated channel and episode data for channel"
             f"{channel_name} with id={channel_id}. Added {len(videos)} "
             f"episodes to DB for channel {channel_name}"
         )
-    print("-" * 10)
-    print("Completed YouTube sync.")
+    logger.info("-" * 10)
+    logger.info("Completed YouTube sync.")
 
 
 if __name__ == "__main__":

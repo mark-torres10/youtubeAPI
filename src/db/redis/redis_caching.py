@@ -15,9 +15,10 @@ from typing import Dict, Union
 import redis
 
 from db.redis.constants import DEFAULT_CACHE_TIME_SECONDS, REDIS_HOST, REDIS_PORT
+from lib.log.logger import Logger
 
 redis_conn = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True)
-
+logger = Logger()
 
 def cache_key(function_name: str, params: Dict) -> str:
     """Generate a cache key based on the API endpoint and parameters."""
@@ -39,11 +40,7 @@ def get_cached_data(function_name: str, params: Dict) -> Union[Dict, None]:
     cached_data = redis_conn.get(key)
     if cached_data is not None:
         return json.loads(cached_data)
-    print(
+    logger.warning(
         f"Cached data not found for function {function_name} and params {params}"
     )  # noqa
     return None
-
-
-if __name__ == "__main__":
-    print(redis_conn)

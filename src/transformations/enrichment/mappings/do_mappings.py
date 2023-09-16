@@ -5,7 +5,9 @@ from transformations.enrichment.mappings import helper
 from transformations.enrichment.mappings.map_channels import map_channels
 from transformations.enrichment.mappings.map_episodes import map_episodes
 from transformations.enrichment.mappings.sqlite_helper import write_mapped_data_to_db
+from lib.log.logger import Logger
 
+logger = Logger()
 
 def main() -> None:
     """Creates unified definitions of podcast channels and episodes across
@@ -35,7 +37,9 @@ def main() -> None:
             mapped_episode = helper.create_mapped_episode_instance(episode)
             write_mapped_data_to_db(mapped_episode)
 
-    print("Completed mapping podcasts across YouTube and Spotify integrations.")  # noqa
+    logger.info(
+        "Completed mapping podcasts across YouTube and Spotify integrations."
+    )
 
 
 if __name__ == "__main__":

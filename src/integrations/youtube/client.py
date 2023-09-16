@@ -15,8 +15,11 @@ from googleapiclient.errors import HttpError
 
 from db.redis.redis_caching import cache_data, get_cached_data
 from lib.sync_enrichment import METADATA_TO_HYDRATE
+from lib.log.logger import Logger
 
 load_dotenv(Path("../../../.env"))
+
+logger = Logger()
 
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
@@ -34,7 +37,7 @@ def manage_rate_limit_throttling(func: Callable) -> Callable:
                 return wrapper(*args, **kwargs)  # Retry the function
             else:
                 # Handle other HTTP errors here, e.g., log or raise an exception
-                print(f"HTTP error: {e}")
+                logger.error(f"HTTP error: {e}")
                 return {"error": f"HTTP error: {e}"}
 
     return wrapper

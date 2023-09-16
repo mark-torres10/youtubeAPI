@@ -2,7 +2,10 @@
 from datetime import datetime
 from typing import Any, Dict, List, Union
 
+from lib.log.logger import Logger
 from transformations.enrichment import constants
+
+logger = Logger()
 
 
 def titles_match(youtube_video_title: str, spotify_episode_title: str) -> bool:
@@ -280,7 +283,7 @@ def map_episodes(
         if spotify_to_matching_youtube_video[spotify_id] == youtube_id:
             mappings.append({"youtube_id": youtube_id, "spotify_id": spotify_id})
 
-    print(
+    logger.info(
         f"From {len(youtube_videos)} and {len(spotify_episodes)}, created "
         f"{len(mappings)} mappings."
     )

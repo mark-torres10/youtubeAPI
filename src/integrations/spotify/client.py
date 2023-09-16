@@ -16,9 +16,12 @@ from typing import Dict, List, Optional
 
 from db.redis.redis_caching import cache_data, get_cached_data
 from integrations.spotify import constants
+from lib.log.logger import Logger
 from lib.sync_enrichment import METADATA_TO_HYDRATE
 
 load_dotenv(Path("../../../.env"))
+
+logger = Logger()
 
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
@@ -46,7 +49,7 @@ class SpotifyClient:
         show_data = response.json()
         if "shows" in show_data:
             if show_data["shows"]["total"] == 0:
-                print(
+                logger.warning(
                     f"No Spotify show found with show_name={show_name}"
                 )  # TODO: should be logger
                 return ""

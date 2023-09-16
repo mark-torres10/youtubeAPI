@@ -1,3 +1,4 @@
+backports.zoneinfo==0.2.1;python_version<"3.9"
 black==23.9.1
 django==4.2.5
 google-api-python-client==2.99.0

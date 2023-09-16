@@ -16,8 +16,10 @@ async-timeout==4.0.3
     # via redis
 backcall==0.2.0
     # via ipython
-backports-zoneinfo==0.2.1
-    # via django
+backports-zoneinfo==0.2.1 ; python_version < "3.9"
+    # via
+    #   -r requirements.in
+    #   django
 black==23.9.1
     # via -r requirements.in
 build==1.0.3

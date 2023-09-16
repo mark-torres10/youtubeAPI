@@ -19,7 +19,7 @@ cursor = conn.cursor()
 test_conn = sqlite3.connect(TEST_DB_NAME)
 test_cursor = test_conn.cursor()
 
-logger = Logger()
+logger = Logger(__name__)
 
 
 def generate_create_table_statement(table_name: str) -> str:
@@ -82,6 +82,11 @@ def single_row_insertion_is_valid(row_data: Dict, table_name: str) -> bool:
 
 
 def get_all_table_results_as_df(table_name: str) -> pd.DataFrame:
-    query = f"SELECT * FROM {table_name}"
-    df = pd.read_sql_query(query, conn)
-    return df
+    try:
+        query = f"SELECT * FROM {table_name}"
+        df = pd.read_sql_query(query, conn)
+        return df
+    except Exception as e:
+        logger.info(f"Error getting all table results as df: {e}")
+        logger.info("Returning empty df.")
+        return pd.DataFrame()

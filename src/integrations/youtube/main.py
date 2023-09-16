@@ -8,7 +8,7 @@ from integrations.youtube.client import YoutubeClient
 from integrations.youtube.sqlite_helper import write_youtube_data_to_db
 from lib.log.logger import Logger
 
-logger = Logger()
+logger = Logger(__name__)
 
 def main() -> None:
     client = YoutubeClient()

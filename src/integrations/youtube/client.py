@@ -19,7 +19,7 @@ from lib.log.logger import Logger
 
 load_dotenv(Path("../../../.env"))
 
-logger = Logger()
+logger = Logger(__name__)
 
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 

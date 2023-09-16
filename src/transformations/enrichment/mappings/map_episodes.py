@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Union
 from lib.log.logger import Logger
 from transformations.enrichment import constants
 
-logger = Logger()
+logger = Logger(__name__)
 
 
 def titles_match(youtube_video_title: str, spotify_episode_title: str) -> bool:

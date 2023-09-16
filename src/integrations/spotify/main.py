@@ -8,7 +8,7 @@ from integrations.spotify.constants import SPOTIFY_SHOW_NAME_TO_ID_MAP
 from integrations.spotify.sqlite_helper import write_spotify_data_to_db
 from lib.log.logger import Logger
 
-logger = Logger()
+logger = Logger(__name__)
 
 def main() -> None:
     client = SpotifyClient()

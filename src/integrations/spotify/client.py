@@ -21,7 +21,7 @@ from lib.sync_enrichment import METADATA_TO_HYDRATE
 
 load_dotenv(Path("../../../.env"))
 
-logger = Logger()
+logger = Logger(__name__)
 
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")

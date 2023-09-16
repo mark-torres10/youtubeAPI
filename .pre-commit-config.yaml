@@ -5,10 +5,16 @@ repos:
       - id: mypy
         args: [
           "--ignore-missing-imports",
+          "--no-site-packages",
           "--strict-optional",
           "--no-implicit-optional",
           "--warn-unused-ignores",
-          "--disallow-untyped-defs"
+          "--disallow-untyped-defs",
+          "--warn-unreachable",
+          "--warn-redundant-casts",
+          "--exclude=test/",
+          "--namespace-packages",
+          #"src/"
         ]
 
 # https://github.com/pre-commit/pre-commit-hooks

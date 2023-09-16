@@ -1,65 +1,80 @@
-# DISCLAIMER: this was produced by ChatGPT. More specific details forthcoming
-# YouTube Podcast Integration
+# Project Technical Overview
 
-## Table of Contents
-- [Introduction](#introduction)
-- [Problem Statement](#problem-statement)
-- [Solution Overview](#solution-overview)
-- [Architecture](#architecture)
-- [Tools and Technologies](#tools-and-technologies)
-- [Getting Started](#getting-started)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+## Overview
 
-## Introduction
+This project is a comprehensive podcast data management system that efficiently synchronizes podcast information from YouTube and Spotify, maps them together into a consolidated dataset, and exposes this data through a REST API. The data is then presented to users via a React frontend. It employs a range of modern technologies, including React, Python, Django, SQLite, Redis, Airflow, Docker, and Github Actions.
 
-YouTube Podcast Integration is a Python-based project that solves the challenge of integrating podcasts uploaded to YouTube with an existing database. This project is designed to automate the process of fetching podcast data from YouTube, extracting relevant information, and seamlessly integrating it into an organization's database system.
+## Project Objectives
 
-## Problem Statement
+The primary objectives of this project are as follows:
 
-Many organizations host podcasts on YouTube for their audience. However, managing podcast data, including titles, descriptions, upload dates, and URLs, can be cumbersome, especially when the organization's database contains crucial information about episodes and content. The pain point is to figure out how to streamline the integration of YouTube podcast data with the existing database without manual intervention.
+1. **Data Synchronization**: To synchronize podcast data from YouTube and Spotify, ensuring that the most up-to-date information is available.
 
-## Solution Overview
+2. **Data Mapping**: To consolidate podcast information from various integrations, mapping relevant data together to create a unified dataset.
 
-This project provides a solution to the problem by automating the extraction and integration process. It leverages the YouTube Data API to fetch podcast details from YouTube channels, extracts relevant metadata, and integrates it with the organization's database system.
+3. **API Creation**: To create a RESTful API with two GET endpoints:
+   - `/api/channels`: Retrieves a list of podcast channels.
+   - `/api/episodes`: Retrieves a list of podcast episodes.
 
-## Architecture
+4. **User-Friendly Frontend**: To provide users with an intuitive React-based frontend for easy access to the data.
 
-The architecture of the YouTube Podcast Integration project consists of the following components:
+## Technology Stack
 
-- **YouTube Data API**: Used to retrieve podcast data from YouTube channels.
+The project leverages the following technologies:
 
-- **Database**: Stores and manages podcast-related information. PostgreSQL is used as the database.
+### Frontend
+- **React**: The frontend is built using React, a powerful JavaScript library for building user interfaces. React's component-based architecture makes it highly modular and easy to maintain.
 
-- **Python Script**: The main.py script orchestrates the entire process. It interacts with the YouTube Data API to fetch podcast data and interacts with the database to store the information.
+### Backend
+- **Python**: Python is the backend language of choice due to its versatility and a rich ecosystem of libraries for data manipulation and web development.
+- **Django**: Django, a high-level Python web framework, powers the backend. It offers features such as ORM for database management, URL routing, and authentication.
+- **SQLite**: SQLite serves as the project's lightweight relational database system for data storage.
+- **Redis**: Redis is used for caching to enhance API performance.
 
-## Tools and Technologies
+### Orchestration
+- **Airflow**: Apache Airflow is employed to orchestrate and schedule data synchronization and transformation tasks. It ensures data pipelines run efficiently and on schedule.
 
-The project uses the following tools and technologies:
+### Deployment
+- **Docker**: Docker containers are used for creating a portable and consistent deployment environment. It encapsulates the application and its dependencies, ensuring seamless deployment across different platforms.
 
-- Python: For scripting and automation.
-- PostgreSQL: As the relational database management system.
-- YouTube Data API: To fetch podcast data from YouTube channels.
-- Docker: For containerization and easy deployment.
-- Redis: For caching and improving API response times.
-- Elasticsearch: For full-text search and indexing.
+### CI/CD
+- **Github Actions**: Github Actions automates the CI/CD pipeline, enabling continuous integration and deployment with ease. It ensures that code changes are tested, built, and deployed automatically.
 
-## Getting Started
+## Architecture Overview
 
-To get started with this project, follow these steps:
+The project follows a microservices architecture, with separate components handling data synchronization, mapping, API creation, and frontend presentation. Here's a high-level overview of the architecture:
 
-1. Clone the repository:
+1. **Data Synchronization**:
+   - Integration-specific scripts sync data from YouTube and Spotify at regular intervals.
+   - Airflow orchestrates and schedules these sync tasks.
 
-```bash
-git clone https://github.com/your-username/youtube-podcast-integration.git
-```
+2. **Data Mapping**:
+   - Consolidation scripts map and merge data from different integrations into a single dataset.
+   - Data is stored in an SQLite database.
 
-## Usage
-The YouTube Podcast Integration project can be used by organizations to automate the integration of podcast data from YouTube into their existing database systems. Developers can customize and extend the project to suit their specific requirements.
+3. **Backend/API**:
+   - Django-powered backend exposes two API endpoints (`/api/channels` and `/api/episodes`) to serve podcast channel and episode data.
+   - Redis is used for caching to improve API response times.
 
-## Contributing
-Contributions to this project are welcome! If you have any suggestions, improvements, or feature requests, please open an issue or submit a pull request.
+4. **Frontend**:
+   - React frontend provides a user-friendly interface to interact with the data.
+   - Users can request and view podcast channels and episodes in a tabular format.
 
-## License
-This project is licensed under the MIT License.
+## Project Workflow
+
+1. **Data Synchronization**:
+   - Airflow triggers data sync tasks for YouTube and Spotify at specified intervals.
+   - Sync scripts fetch and update podcast data.
+
+2. **Data Mapping**:
+   - Mapping scripts consolidate data from different integrations into a unified dataset.
+   - Data is stored in the SQLite database.
+
+3. **API Interaction**:
+   - Users interact with the data through the RESTful API.
+   - API requests are processed by the Django backend.
+   - Redis caching enhances API response times.
+
+4. **Frontend Display**:
+   - React frontend communicates with the API to display podcast channel and episode data.
+   - Users can view this data as tables.

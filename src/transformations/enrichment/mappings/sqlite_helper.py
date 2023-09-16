@@ -4,7 +4,8 @@ from typing import Union
 from db.sql import helper
 from db.sql.helper import conn, cursor
 from transformations.enrichment.helper import (
-    flatten_mapped_channel, flatten_mapped_episode
+    flatten_mapped_channel,
+    flatten_mapped_episode,
 )
 from transformations.enrichment.mappings.models import MappedChannel, MappedEpisode
 
@@ -14,7 +15,8 @@ def write_mapped_data_to_db(instance: Union[MappedChannel, MappedEpisode]) -> No
     respective SQLite tables."""
     table_name = instance.__table_name__
     instance_dict = (
-        flatten_mapped_channel(instance) if isinstance(instance, MappedChannel)
+        flatten_mapped_channel(instance)
+        if isinstance(instance, MappedChannel)
         else flatten_mapped_episode(instance)
     )
     instance_dict.pop("__table_name__", None)

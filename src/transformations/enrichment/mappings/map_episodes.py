@@ -150,9 +150,7 @@ def fuzzy_match_youtube_video_to_spotify_episode(
 
 
 def match_youtube_video_to_spotify_episode(
-    youtube_video: Dict,
-    spotify_episode: Dict,
-    allow_fuzzy_matching: bool = False
+    youtube_video: Dict, spotify_episode: Dict, allow_fuzzy_matching: bool = False
 ) -> Dict[str, Union[str, float]]:
     """Performs a matching between a YouTube video and Spotify episode, to
     get the likelihood (a float between 0 and 1) that they should be
@@ -193,8 +191,8 @@ def match_youtube_video_to_spotify_episode(
 
 def find_most_likely_spotify_map_to_youtube_videos(
     youtube_videos: List[Dict], spotify_episodes: List[Dict]
-) -> Dict[str, Dict[str, str]]:
-    youtube_to_matching_spotify_episode: Dict[str, str] = {}
+) -> Dict[str, Dict]:
+    youtube_to_matching_spotify_episode: Dict[str, Dict] = {}
     # loop through all the YouTube videos, find most likely Spotify match
     for youtube_video in youtube_videos:
         youtube_id = youtube_video["video_id"]
@@ -207,8 +205,8 @@ def find_most_likely_spotify_map_to_youtube_videos(
             match_dict = match_youtube_video_to_spotify_episode(
                 youtube_video=youtube_video, spotify_episode=spotify_episode
             )
-            match_type: str = match_dict["match_type"] # type: ignore
-            match_score: float = match_dict["value"] # type: ignore
+            match_type: str = match_dict["match_type"]  # type: ignore
+            match_score: float = match_dict["value"]  # type: ignore
             if match_type == "exact":
                 # found exact match
                 if match_score == 1.0:
@@ -227,18 +225,18 @@ def find_most_likely_spotify_map_to_youtube_videos(
             youtube_to_matching_spotify_episode[youtube_id] = {
                 "matching_id": spotify_id,
                 "matching_name": spotify_episode_name,
-                "matching_description": spotify_episode["description"], # noqa
+                "matching_description": spotify_episode["description"],  # noqa
                 "original_id": youtube_id,
                 "original_name": youtube_video["video_title"],
-                "original_description": youtube_video["description"]
+                "original_description": youtube_video["description"],
             }
     return youtube_to_matching_spotify_episode
 
 
 def find_most_likely_youtube_map_to_spotify_episodes(
     youtube_videos: List[Dict], spotify_episodes: List[Dict]
-) -> Dict[str, str]:
-    spotify_to_matching_youtube_video: Dict[str, str] = {}
+) -> Dict[str, Dict]:
+    spotify_to_matching_youtube_video: Dict[str, Dict] = {}
     # loop through all the Spotify episodes, find most likely YouTube match
     for spotify_episode in spotify_episodes:
         spotify_id = spotify_episode["id"]
@@ -250,8 +248,8 @@ def find_most_likely_youtube_map_to_spotify_episodes(
             match_dict = match_youtube_video_to_spotify_episode(
                 youtube_video=youtube_video, spotify_episode=spotify_episode
             )
-            match_type: str = match_dict["match_type"] # type: ignore
-            match_score: float = match_dict["value"] # type: ignore
+            match_type: str = match_dict["match_type"]  # type: ignore
+            match_score: float = match_dict["value"]  # type: ignore
             if match_type == "exact":
                 # found exact match
                 if match_score == 10:
@@ -273,13 +271,13 @@ def find_most_likely_youtube_map_to_spotify_episodes(
                 "matching_description": youtube_video["description"],
                 "original_id": spotify_id,
                 "original_name": spotify_episode["name"],
-                "original_ddescription": spotify_episode["description"]
+                "original_ddescription": spotify_episode["description"],
             }
     return spotify_to_matching_youtube_video
 
 
 def get_episode_id_to_channel_id_map(
-    mapped_channels: List[MappedChannel]
+    mapped_channels: List[MappedChannel],
 ) -> Dict[str, Dict[str, Dict]]:
     """
     Returns a map of the episode ID to the channel ID
@@ -308,23 +306,19 @@ def get_episode_id_to_channel_id_map(
         youtube_channel_id = youtube_channel_info.id
         yotube_episode_ids = youtube_channel_info.episode_ids
         for youtube_episode_id in yotube_episode_ids:
-            youtube_episode_id_to_channel_id[youtube_episode_id] = (
-                {
-                    "mapped_channel_name": mapped_channel_name,
-                    "integration_channel_id": youtube_channel_id
-                }
-            )
+            youtube_episode_id_to_channel_id[youtube_episode_id] = {
+                "mapped_channel_name": mapped_channel_name,
+                "integration_channel_id": youtube_channel_id,
+            }
 
         spotify_channel_info = mapped_channel.spotify_channel
         spotify_channel_id = spotify_channel_info.id
         spotify_episode_ids = spotify_channel_info.episode_ids
         for spotify_episode_id in spotify_episode_ids:
-            spotify_episode_id_to_channel_id[spotify_episode_id] = (
-                {
-                    "mapped_channel_name": mapped_channel_name,
-                    "integration_channel_id": spotify_channel_id
-                }
-            )
+            spotify_episode_id_to_channel_id[spotify_episode_id] = {
+                "mapped_channel_name": mapped_channel_name,
+                "integration_channel_id": spotify_channel_id,
+            }
 
     return {
         "youtube": youtube_episode_id_to_channel_id,
@@ -343,7 +337,7 @@ def get_consolidate_episode_name(
             spotify_episode_name=spotify_episode_name,
         )
     return spotify_episode_name
-    
+
 
 def get_consolidated_description(
     youtube_episode_description: str, spotify_episode_description: str
@@ -373,12 +367,12 @@ def get_consolidated_mapped_channel_name(
 
 def create_mapped_episode_metadata(
     mapping: Dict[str, str],
-    youtube_episode_id_to_channel_id_map: Dict[str, str],
-    spotify_episode_id_to_channel_id_map: Dict[str, str]
+    youtube_episode_id_to_channel_id_map: Dict[str, Dict],
+    spotify_episode_id_to_channel_id_map: Dict[str, Dict],
 ) -> Dict:
     """Given the mapped metadata with the integration id and episode name,
     hydrate with more information and create the mapped episode metadata.
-    
+
     Things to add:
     - consolidated name
     - consolidated description
@@ -386,11 +380,11 @@ def create_mapped_episode_metadata(
     """
     consolidated_name = get_consolidate_episode_name(
         youtube_episode_name=mapping["youtube_episode_name"],
-        spotify_episode_name=mapping["spotify_episode_name"]
+        spotify_episode_name=mapping["spotify_episode_name"],
     )
     consolidated_description = get_consolidated_description(
         youtube_episode_description=mapping["youtube_description"],
-        spotify_episode_description=mapping["spotify_description"]
+        spotify_episode_description=mapping["spotify_description"],
     )
     youtube_episode_id = mapping["youtube_id"]
     spotify_episode_id = mapping["spotify_id"]
@@ -399,19 +393,19 @@ def create_mapped_episode_metadata(
 
     mapped_channel_name = get_consolidated_mapped_channel_name(
         youtube_channel_name=youtube_channel_data["mapped_channel_name"],
-        spotify_channel_name=spotify_channel_data["mapped_channel_name"]
+        spotify_channel_name=spotify_channel_data["mapped_channel_name"],
     )
 
     youtube_episode_data = {
         "id": youtube_episode_id,
         "channel_id": youtube_channel_data["integration_channel_id"],
-        "name": mapping["youtube_episode_name"]
+        "name": mapping["youtube_episode_name"],
     }
 
     spotify_episode_data = {
         "id": spotify_episode_id,
         "channel_id": spotify_channel_data["integration_channel_id"],
-        "name": mapping["spotify_episode_name"]
+        "name": mapping["spotify_episode_name"],
     }
 
     return {
@@ -419,47 +413,52 @@ def create_mapped_episode_metadata(
         "mapped_channel_name": mapped_channel_name,
         "consolidated_description": consolidated_description,
         "youtube_episode": youtube_episode_data,
-        "spotify_episode": spotify_episode_data
+        "spotify_episode": spotify_episode_data,
     }
 
 
 def map_episodes(
     youtube_videos: List[Dict],
     spotify_episodes: List[Dict],
-    mapped_channels: List[MappedChannel]
+    mapped_channels: List[MappedChannel],
 ) -> List[Dict]:
     """Map a given channel's YouTube videos against possible Spotify podcast versions
     of those same videos.
     """
-    youtube_to_matching_spotify_episode: Dict[str, Dict[str, str]] = (
-        find_most_likely_spotify_map_to_youtube_videos(
-            youtube_videos=youtube_videos, spotify_episodes=spotify_episodes
-        )
+    youtube_to_matching_spotify_episode: Dict[
+        str, Dict[str, str]
+    ] = find_most_likely_spotify_map_to_youtube_videos(
+        youtube_videos=youtube_videos, spotify_episodes=spotify_episodes
     )
-    spotify_to_matching_youtube_video: Dict[str, Dict[str, str]] = (
-        find_most_likely_youtube_map_to_spotify_episodes(
-            youtube_videos=youtube_videos, spotify_episodes=spotify_episodes
-        )
+    spotify_to_matching_youtube_video: Dict[
+        str, Dict[str, str]
+    ] = find_most_likely_youtube_map_to_spotify_episodes(
+        youtube_videos=youtube_videos, spotify_episodes=spotify_episodes
     )
 
     mappings: List[Dict] = []
 
     # check for bijective match. If so, add to mappings
-    for youtube_id, matching_spotify_data in youtube_to_matching_spotify_episode.items(): # noqa
+    for (
+        youtube_id,
+        matching_spotify_data,
+    ) in youtube_to_matching_spotify_episode.items():  # noqa
         spotify_id = matching_spotify_data["matching_id"]
         spotify_episode_name = matching_spotify_data["matching_name"]
         spotify_description = matching_spotify_data["matching_description"]
-        if spotify_to_matching_youtube_video[spotify_id]["matching_id"] == (
-            youtube_id
-        ):
+        if spotify_to_matching_youtube_video[spotify_id]["matching_id"] == (youtube_id):
             mappings.append(
                 {
                     "youtube_id": youtube_id,
                     "spotify_id": spotify_id,
-                    "youtube_episode_name": matching_spotify_data["original_name"], # noqa
+                    "youtube_episode_name": matching_spotify_data[
+                        "original_name"
+                    ],  # noqa
                     "spotify_episode_name": spotify_episode_name,
-                    "youtube_description": matching_spotify_data["original_description"], # noqa
-                    "spotify_description": spotify_description
+                    "youtube_description": matching_spotify_data[
+                        "original_description"
+                    ],  # noqa
+                    "spotify_description": spotify_description,
                 }
             )
 
@@ -471,19 +470,19 @@ def map_episodes(
     episode_id_to_channel_id_map = get_episode_id_to_channel_id_map(
         mapped_channels=mapped_channels
     )
-    youtube_episode_id_to_channel_id_map = episode_id_to_channel_id_map["youtube"] # noqa
-    spotify_episode_id_to_channel_id_map = episode_id_to_channel_id_map["spotify"] # noqa
+    youtube_episode_id_to_channel_id_map = episode_id_to_channel_id_map[
+        "youtube"
+    ]  # noqa
+    spotify_episode_id_to_channel_id_map = episode_id_to_channel_id_map[
+        "spotify"
+    ]  # noqa
 
     # hydrate the youtube/spotify ids with the channel information
     mapped_episode_metadatas = [
         create_mapped_episode_metadata(
             mapping=mapping,
-            youtube_episode_id_to_channel_id_map=(
-                youtube_episode_id_to_channel_id_map
-            ),
-            spotify_episode_id_to_channel_id_map=(
-                spotify_episode_id_to_channel_id_map
-            )
+            youtube_episode_id_to_channel_id_map=(youtube_episode_id_to_channel_id_map),
+            spotify_episode_id_to_channel_id_map=(spotify_episode_id_to_channel_id_map),
         )
         for mapping in mappings
     ]

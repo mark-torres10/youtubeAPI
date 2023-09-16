@@ -5,26 +5,23 @@ import pandas as pd
 
 from lib.constants import CURRENT_SYNCTIMESTAMP
 from transformations.enrichment.helper import (
-    create_mapped_channel_instance, get_spotify_show_info,
-    get_youtube_channel_info
+    create_mapped_channel_instance,
+    get_spotify_show_info,
+    get_youtube_channel_info,
 )
 
 
-YOUTUBE_CHANNEL_TO_SPOTIFY_SHOW_MAPPING = {
-    "Andrew Huberman": "Huberman Lab"
-}
+YOUTUBE_CHANNEL_TO_SPOTIFY_SHOW_MAPPING = {"Andrew Huberman": "Huberman Lab"}
 
 SPOTIFY_SHOW_TO_YOUTUBE_CHANNEL_MAP = {
     spotify_name: youtube_name
-    for youtube_name, spotify_name
-    in YOUTUBE_CHANNEL_TO_SPOTIFY_SHOW_MAPPING.items()
+    for youtube_name, spotify_name in YOUTUBE_CHANNEL_TO_SPOTIFY_SHOW_MAPPING.items()
 }
 
 
 def return_consolidated_channel_name(
-    channel_name: str,
-    integration: Literal["spotify", "youtube"]
-)  -> str:
+    channel_name: str, integration: Literal["spotify", "youtube"]
+) -> str:
     """Returns the consolidated channel name."""
     return (
         channel_name
@@ -50,26 +47,25 @@ def consolidate_channel_metadata(
     }
     """
     youtube_name = (
-        channel_info["channel_title"] if integration == "youtube"
+        channel_info["channel_title"]
+        if integration == "youtube"
         else SPOTIFY_SHOW_TO_YOUTUBE_CHANNEL_MAP[channel_info["show_title"]]
     )
     spotify_name = (
-        channel_info["show_title"] if integration == "spotify"
-        else YOUTUBE_CHANNEL_TO_SPOTIFY_SHOW_MAPPING[
-            channel_info["channel_title"]
-        ]
+        channel_info["show_title"]
+        if integration == "spotify"
+        else YOUTUBE_CHANNEL_TO_SPOTIFY_SHOW_MAPPING[channel_info["channel_title"]]
     )
     return {
         "consolidated_name": spotify_name,
         "youtube_channel_name": youtube_name,
         "spotify_show_name": spotify_name,
-        "last_updated_timestamp": CURRENT_SYNCTIMESTAMP
+        "last_updated_timestamp": CURRENT_SYNCTIMESTAMP,
     }
 
 
 def get_map_channel_to_episode_ids(
-    youtube_videos_df: pd.DataFrame,
-    spotify_episodes_df: pd.DataFrame
+    youtube_videos_df: pd.DataFrame, spotify_episodes_df: pd.DataFrame
 ) -> Dict[str, Dict[str, List[str]]]:
     """Get a mapping of channel name to episode ids.
 
@@ -103,7 +99,7 @@ def get_map_channel_to_episode_ids(
 
     return {
         "youtube": youtube_channel_id_to_episode_ids_map,
-        "spotify": spotify_channel_id_to_episode_ids_map
+        "spotify": spotify_channel_id_to_episode_ids_map,
     }
 
 
@@ -111,7 +107,7 @@ def map_channels(
     youtube_channels_df: pd.DataFrame,
     spotify_shows_df: pd.DataFrame,
     youtube_videos_df: pd.DataFrame,
-    spotify_episodes_df: pd.DataFrame
+    spotify_episodes_df: pd.DataFrame,
 ) -> List[Dict]:
     """Map YouTube and Spotify channels."""
 
@@ -125,14 +121,10 @@ def map_channels(
         consolidated_name = return_consolidated_channel_name(
             youtube_channel["channel_title"], "youtube"
         )
-        channel_metadata = consolidate_channel_metadata(
-            youtube_channel, "youtube"
-        )
+        channel_metadata = consolidate_channel_metadata(youtube_channel, "youtube")
         youtube_channel_id = youtube_channel["channel_id"]
         channel_metadata["youtube_channel_id"] = youtube_channel_id
-        consolidated_name_to_channel_metadata_map[consolidated_name] = (
-            channel_metadata
-        )
+        consolidated_name_to_channel_metadata_map[consolidated_name] = channel_metadata
 
     # enrich consolidated metadata with spotify data
     for spotify_show in spotify_show_info_list:
@@ -141,9 +133,9 @@ def map_channels(
         )
         spotify_show_id = spotify_show["id"]
         channel_metadata["spotify_show_id"] = spotify_show_id
-        consolidated_name_to_channel_metadata_map[consolidated_name]["spotify_show_id"] = ( # noqa
-            channel_metadata
-        )
+        consolidated_name_to_channel_metadata_map[consolidated_name][
+            "spotify_show_id"
+        ] = channel_metadata  # noqa
 
     consolidated_metadata: List[Dict] = list(
         consolidated_name_to_channel_metadata_map.values()
@@ -162,12 +154,12 @@ def map_channels(
     for channel_metadata in consolidated_metadata:
         youtube_channel_id = channel_metadata["youtube_channel_id"]
         spotify_show_id = channel_metadata["spotify_show_id"]
-        channel_metadata["youtube_episode_ids"] = (
-            youtube_channel_to_episode_ids_map[youtube_channel_id]
-        )
-        channel_metadata["spotify_episode_ids"] = (
-            spotify_channel_to_episode_ids_map[spotify_show_id]
-        )
+        channel_metadata["youtube_episode_ids"] = youtube_channel_to_episode_ids_map[
+            youtube_channel_id
+        ]
+        channel_metadata["spotify_episode_ids"] = spotify_channel_to_episode_ids_map[
+            spotify_show_id
+        ]
         mapped_channel_metadata.append(channel_metadata)
 
     # create mapped channel instances

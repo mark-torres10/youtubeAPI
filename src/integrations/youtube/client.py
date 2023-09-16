@@ -45,9 +45,7 @@ def manage_rate_limit_throttling(func: Callable) -> Callable:
 
 class YoutubeClient:
     def __init__(self) -> None:
-        self.client: Resource = build(
-            "youtube", "v3", developerKey=YOUTUBE_API_KEY
-        )
+        self.client: Resource = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
 
     # https://developers.google.com/youtube/v3/guides/working_with_channel_ids
     def get_channel_id_from_handle(self, handle: str) -> str:
@@ -215,15 +213,15 @@ class YoutubeClient:
         extraction and that transformation should happen downstream.
         """
         metadata: Dict[str, str] = video_response["items"][0]["snippet"]
-        video_statistics: Dict[str, Union[str, int]]  = (
-            video_response["items"][0]["statistics"]
-        )
-        video_statistics["viewCount"] = int(video_statistics.get("viewCount"), 0) # type: ignore
-        video_statistics["likeCount"] = int(video_statistics.get("likeCount"), 0) # type: ignore
+        video_statistics: Dict[str, Union[str, int]] = video_response["items"][0][
+            "statistics"
+        ]
+        video_statistics["viewCount"] = int(video_statistics.get("viewCount"), 0)  # type: ignore
+        video_statistics["likeCount"] = int(video_statistics.get("likeCount"), 0)  # type: ignore
         video_statistics["favoriteCount"] = int(
-            video_statistics.get("favoriteCount"), 0 # type: ignore
+            video_statistics.get("favoriteCount"), 0  # type: ignore
         )
-        video_statistics["commentCount"] = int(video_statistics.get("commentCount"), 0) # type: ignore
+        video_statistics["commentCount"] = int(video_statistics.get("commentCount"), 0)  # type: ignore
         return metadata, video_statistics
 
     def get_video_stats_for_channel_by_video(

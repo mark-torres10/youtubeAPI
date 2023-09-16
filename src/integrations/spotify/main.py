@@ -10,6 +10,7 @@ from lib.log.logger import Logger
 
 logger = Logger(__name__)
 
+
 def main() -> None:
     client = SpotifyClient()
     for show_name, show_id in SPOTIFY_SHOW_NAME_TO_ID_MAP.items():

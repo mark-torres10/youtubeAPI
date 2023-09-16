@@ -10,6 +10,7 @@ from lib.log.logger import Logger
 
 logger = Logger(__name__)
 
+
 def main() -> None:
     client = YoutubeClient()
 

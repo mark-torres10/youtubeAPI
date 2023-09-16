@@ -9,6 +9,7 @@ from lib.log.logger import Logger
 
 logger = Logger(__name__)
 
+
 def main() -> None:
     """Creates unified definitions of podcast channels and episodes across
     different integrations by mapping them together."""
@@ -26,7 +27,7 @@ def main() -> None:
         youtube_channels_df=youtube_channels_df,
         spotify_shows_df=spotify_shows_df,
         youtube_videos_df=youtube_videos_df,
-        spotify_episodes_df=spotify_episodes_df
+        spotify_episodes_df=spotify_episodes_df,
     )
 
     for mapped_channel in mapped_channels:
@@ -42,9 +43,7 @@ def main() -> None:
             mapped_episode = helper.create_mapped_episode_instance(episode)
             write_mapped_data_to_db(mapped_episode)
 
-    logger.info(
-        "Completed mapping podcasts across YouTube and Spotify integrations."
-    )
+    logger.info("Completed mapping podcasts across YouTube and Spotify integrations.")
 
 
 if __name__ == "__main__":

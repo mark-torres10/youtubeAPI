@@ -16,7 +16,7 @@ logging.basicConfig(
     handlers=[
         logging.StreamHandler(),
         # Rotating log file, 1MB max size, keeping 5 backups
-        RotatingFileHandler(log_filename, maxBytes=1024 * 1024, backupCount=5) 
+        RotatingFileHandler(log_filename, maxBytes=1024 * 1024, backupCount=5),
     ],
 )
 

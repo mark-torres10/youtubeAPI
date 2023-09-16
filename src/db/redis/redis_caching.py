@@ -20,6 +20,7 @@ from lib.log.logger import Logger
 redis_conn = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True)
 logger = Logger(__file__)
 
+
 def cache_key(function_name: str, params: Dict) -> str:
     """Generate a cache key based on the API endpoint and parameters."""
     # Serialize the parameters as a JSON string

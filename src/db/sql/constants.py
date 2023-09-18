@@ -65,6 +65,28 @@ TABLE_NAME_TO_SCHEMA_MAP = {
         uri TEXT,
         synctimestamp TEXT
     """,  # noqa
+    "mapped_channels": """
+        consolidated_name TEXT PRIMARY KEY,
+        youtube_channel_id TEXT,
+        youtube_channel_name TEXT,
+        youtube_episode_ids TEXT,  -- Comma-separated list of episode IDs
+        spotify_show_id TEXT,
+        spotify_show_name TEXT,
+        spotify_episode_ids TEXT,  -- Comma-separated list of episode IDs
+        last_updated_timestamp TEXT
+    """,
+    "mapped_episodes": """
+        consolidated_name TEXT PRIMARY KEY,
+        mapped_channel_name TEXT,  -- Foreign key to link episodes to channels (assuming a channels table)
+        consolidated_description TEXT,
+        youtube_episode_id TEXT,
+        youtube_episode_channel_id TEXT,
+        youtube_episode_name TEXT,
+        spotify_episode_id TEXT,
+        spotify_episode_show_id TEXT,
+        spotify_episode_show_name TEXT,
+        last_updated_timestamp TEXT
+    """
 }
 
 

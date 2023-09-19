@@ -38,10 +38,10 @@ For the sake of an MVP, the output of the REST API just returns all the data in 
 
 ## Technology Stack
 - Data pipeline: Python
-- Frontend: React
+- Frontend: React (very simple frontend, just contains two buttons, one to call each API endpoint, and upon clicking, returns the result as a table)
 - Backend: Django
 - DB: SQLite
-- Caching: Redis
+- Caching: Redis (used primarily on the sync side to cache requests to YouTube and Spotify APIs to avoid getting rate-limited during development).
 - Orchestration: Airflow (set to update every 24 hours)
 - Deployment: Docker
 - CI/CD: Github Actions
